@@ -1,7 +1,7 @@
 <section class="login-page">
     <article class="brand-panel">
-        <div class="brand-chip">OneCore Integration Suite</div>
-        <h1>Controla toda tu API desde un solo workspace</h1>
+        <div class="brand-chip">OneCore Plataforma Integrada</div>
+        <h1>Controla toda tu API desde un solo lugar</h1>
         <p>
             Autenticacion, CSV, analisis documental con IA y auditoria de eventos en una experiencia unificada.
         </p>
@@ -26,7 +26,7 @@
         <div class="login-header">
             <p class="eyebrow">Acceso seguro</p>
             <h2>Iniciar sesion</h2>
-            <p>Ingresa con tu usuario del backend FastAPI para abrir la consola.</p>
+            <p>Ingresa con tu usuario para abrir el panel principal.</p>
         </div>
 
         <form #loginForm="ngForm" class="login-form" (ngSubmit)="submit(loginForm)">
@@ -40,7 +40,7 @@
             </div>
 
             <div class="field-wrap">
-                <label for="password">Password</label>
+                <label for="password">Contrasena</label>
                 <p-password id="password" [(ngModel)]="password" name="password" [feedback]="false" [toggleMask]="true"
                     autocomplete="current-password" required styleClass="w-full"
                     [inputStyleClass]="'w-full ' + (shouldShowPasswordError ? 'ng-invalid' : '')"
@@ -49,7 +49,7 @@
             </div>
 
             <p-button type="submit" [loading]="loading" [disabled]="loading"
-                [label]="loading ? 'Validando credenciales...' : 'Entrar al Workspace'"
+                [label]="loading ? 'Validando credenciales...' : 'Entrar al panel'"
                 [icon]="loading ? 'pi pi-spinner pi-spin' : 'pi pi-arrow-right'" styleClass="w-full cta-btn" />
 
             <small class="submit-hint" *ngIf="!loading">Usa tus credenciales del backend para continuar.</small>

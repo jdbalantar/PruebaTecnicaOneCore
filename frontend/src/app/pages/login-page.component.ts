@@ -98,10 +98,10 @@ export class LoginPageComponent implements OnInit {
   get passwordError(): string {
     const value = this.password;
     if (!value) {
-      return 'La password es obligatoria.';
+      return 'La contrasena es obligatoria.';
     }
     if (value.length < 8) {
-      return 'La password debe tener al menos 8 caracteres.';
+      return 'La contrasena debe tener al menos 8 caracteres.';
     }
     return '';
   }

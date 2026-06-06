@@ -17,6 +17,18 @@
     gap: 0.75rem;
 }
 
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.filter-field label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
 .mt-3 {
     margin-top: 0.75rem;
 }
@@ -36,6 +48,10 @@
 
 :host-context(.app-dark) .action-page {
     background: #0b1220;
+}
+
+:host-context(.app-dark) .filter-field label {
+    color: #cbd5e1;
 }
 
 :host-context(.app-dark) ::ng-deep .p-card,

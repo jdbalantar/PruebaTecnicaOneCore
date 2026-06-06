@@ -21,11 +21,11 @@ import { LayoutService } from '../service/layout.service';
       <div class="layout-topbar-menu-content">
         <button type="button" class="layout-topbar-action" routerLink="/app">
           <i class="pi pi-home"></i>
-          <span>Home</span>
+          <span>Inicio</span>
         </button>
         <button type="button" class="layout-topbar-action" (click)="layout.toggleTheme()">
           <i class="pi" [ngClass]="layout.isDarkTheme() ? 'pi-sun' : 'pi-moon'"></i>
-          <span>{{ layout.isDarkTheme() ? 'Light' : 'Dark' }}</span>
+          <span>{{ layout.isDarkTheme() ? 'Claro' : 'Oscuro' }}</span>
         </button>
         <button type="button" class="layout-topbar-action" (click)="logout()">
           <i class="pi pi-sign-out"></i>

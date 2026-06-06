@@ -1,7 +1,7 @@
 <main class="action-page">
     <p-card>
-        <ng-template #title>CSV Upload</ng-template>
-        <ng-template #subtitle>POST /files/upload</ng-template>
+        <ng-template #title>Carga de CSV</ng-template>
+        <ng-template #subtitle>Sube y valida archivos en lote</ng-template>
 
         <p-message *ngIf="apiError" severity="error" [text]="apiError" styleClass="w-full" />
 
@@ -9,9 +9,9 @@
             <p-fileupload mode="basic" [customUpload]="true" [auto]="false" [multiple]="false" accept=".csv"
                 chooseLabel="Seleccionar CSV" chooseIcon="pi pi-file" (onSelect)="onCsvSelected($event)" />
             <p-button styleClass="p-button-outlined template-download" icon="pi pi-download"
-                label="Descargar template CSV" (onClick)="downloadTemplate()" />
-            <p-select [options]="validationOptions" optionLabel="label" optionValue="value"
-                [(ngModel)]="validationMode" />
+                label="Descargar plantilla CSV" (onClick)="downloadTemplate()" />
+            <p-select [options]="validationOptions" optionLabel="label" optionValue="value" [(ngModel)]="validationMode"
+                placeholder="Modo de validacion" />
             <div class="inline-row">
                 <p-checkbox [(ngModel)]="allowDuplicates" [binary]="true" inputId="dups-route" />
                 <label for="dups-route">Permitir duplicados</label>
@@ -25,14 +25,14 @@
             <div class="result-head">
                 <div>
                     <h3>Resultado de Carga</h3>
-                    <small>Upload: {{ result.upload_id }}</small>
+                    <small>ID de carga: {{ result.upload_id }}</small>
                 </div>
                 <p-tag [value]="result.status.toUpperCase()" [severity]="statusSeverity" />
             </div>
 
             <div class="kv-grid">
                 <div><strong>Archivo:</strong> {{ result.filename }}</div>
-                <div><strong>S3 Key:</strong> {{ result.s3_key }}</div>
+                <div><strong>Ruta de almacenamiento:</strong> {{ result.s3_key }}</div>
                 <div><strong>Total filas:</strong> {{ result.total_rows }}</div>
                 <div><strong>Validas:</strong> {{ result.valid_rows }}</div>
                 <div><strong>Con error:</strong> {{ result.error_rows }}</div>

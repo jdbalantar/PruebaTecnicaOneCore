@@ -44,8 +44,8 @@ export class CsvUploadPageComponent {
   apiError = '';
 
   readonly validationOptions = [
-    { label: 'Lenient', value: 'lenient' },
-    { label: 'Strict', value: 'strict' },
+    { label: 'Flexible', value: 'lenient' },
+    { label: 'Estricta', value: 'strict' },
   ];
 
   constructor(private readonly api: ApiService) {}

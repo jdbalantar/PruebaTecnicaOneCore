@@ -51,15 +51,24 @@ export class EventsPageComponent {
   pageSize = 50;
 
   readonly eventTypes = [
-    'user_login',
-    'token_renewal',
-    'csv_upload',
-    'csv_validation',
-    'doc_upload',
-    'ai_classification',
-    'ai_extraction',
-    'event_export',
-    'error',
+    { label: 'Inicio de sesion', value: 'user_login' },
+    { label: 'Renovacion de token', value: 'token_renewal' },
+    { label: 'Carga de CSV', value: 'csv_upload' },
+    { label: 'Validacion de CSV', value: 'csv_validation' },
+    { label: 'Carga de documento', value: 'doc_upload' },
+    { label: 'Clasificacion con IA', value: 'ai_classification' },
+    { label: 'Extraccion con IA', value: 'ai_extraction' },
+    { label: 'Exportacion de eventos', value: 'event_export' },
+    { label: 'Errores', value: 'error' },
+  ];
+
+  readonly descriptionCandidates = [
+    'Archivo cargado',
+    'Validacion de archivo',
+    'Documento clasificado',
+    'Datos extraidos',
+    'Token renovado',
+    'Error del sistema',
   ];
 
   constructor(private readonly api: ApiService) {}
@@ -119,15 +128,13 @@ export class EventsPageComponent {
 
   filterDescription(event: { query: string }): void {
     const query = (event.query || '').toLowerCase();
-    const candidates = [
-      'uploaded',
-      'validation',
-      'classified',
-      'extracted',
-      'token',
-      'error',
-    ];
-    this.descriptionSuggestions = candidates.filter((item) => item.includes(query));
+    this.descriptionSuggestions = this.descriptionCandidates.filter((item) =>
+      item.toLowerCase().includes(query),
+    );
+  }
+
+  eventTypeLabel(type: string): string {
+    return this.eventTypes.find((item) => item.value === type)?.label ?? type;
   }
 
   severityForEvent(type: string): TagSeverity {

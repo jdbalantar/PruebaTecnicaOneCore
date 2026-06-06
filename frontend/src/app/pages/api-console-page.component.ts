@@ -53,27 +53,39 @@ export class ApiConsolePageComponent implements OnInit, OnDestroy {
   apiError = '';
   healthError = '';
   private healthTimer?: ReturnType<typeof setInterval>;
+  private readonly eventTypeLabels: Record<string, string> = {
+    user_login: 'Inicio de sesion',
+    token_renewal: 'Renovacion de token',
+    csv_upload: 'Carga de CSV',
+    csv_validation: 'Validacion de CSV',
+    doc_upload: 'Carga de documento',
+    ai_classification: 'Clasificacion con IA',
+    ai_extraction: 'Extraccion con IA',
+    event_export: 'Exportacion de eventos',
+    error: 'Error',
+  };
+
   readonly navigationCards: NavigationCard[] = [
     {
-      title: 'CSV Upload',
+      title: 'Carga de CSV',
       description: 'Carga y valida archivos CSV contra el backend.',
       icon: 'pi pi-upload',
       route: '/app/csv-upload'
     },
     {
-      title: 'Document AI',
+      title: 'Analisis documental con IA',
       description: 'Sube PDF/JPG/PNG para clasificación y extracción.',
       icon: 'pi pi-sparkles',
       route: '/app/document-ai'
     },
     {
-      title: 'Events',
+      title: 'Eventos',
       description: 'Consulta, filtra y exporta el histórico de eventos.',
       icon: 'pi pi-table',
       route: '/app/events'
     },
     {
-      title: 'Auth Refresh',
+      title: 'Renovar sesion',
       description: 'Renueva el token JWT con el endpoint protegido.',
       icon: 'pi pi-refresh',
       route: '/app/auth-refresh'
@@ -169,7 +181,7 @@ export class ApiConsolePageComponent implements OnInit, OnDestroy {
         color: 'success'
       },
       {
-        title: 'Database',
+        title: 'Base de datos',
         value: this.systemHealth?.services.database.status === 'up' ? 1 : 0,
         icon: 'pi pi-sparkles',
         color: 'contrast'
@@ -185,6 +197,24 @@ export class ApiConsolePageComponent implements OnInit, OnDestroy {
 
   recentEvents(limit = 5) {
     return this.eventsItems.slice(0, limit);
+  }
+
+  eventTypeLabel(type: string): string {
+    return this.eventTypeLabels[type] ?? type;
+  }
+
+  systemStatusLabel(status: string | undefined): string {
+    if (status === 'ok') {
+      return 'Operativo';
+    }
+    if (status === 'degraded') {
+      return 'Degradado';
+    }
+    return 'Sin datos';
+  }
+
+  serviceStatusLabel(status: 'up' | 'down' | undefined): string {
+    return status === 'up' ? 'Operativo' : 'No disponible';
   }
 
   refreshSystemHealth(): void {

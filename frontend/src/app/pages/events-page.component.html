@@ -1,7 +1,7 @@
 <main class="action-page">
     <p-card>
-        <ng-template #title>Events</ng-template>
-        <ng-template #subtitle>GET /events + export</ng-template>
+        <ng-template #title>Eventos</ng-template>
+        <ng-template #subtitle>Consulta y exportacion del historial</ng-template>
 
         <div class="toolbar-actions">
             <p-button label="Consultar" icon="pi pi-search" (onClick)="loadEvents()" />
@@ -11,15 +11,41 @@
         <p-message *ngIf="apiError" severity="error" [text]="apiError" styleClass="w-full" />
 
         <div class="filters-grid mt-3">
-            <p-select [options]="eventTypes" [(ngModel)]="eventType" placeholder="event_type" [showClear]="true" />
-            <p-autocomplete [(ngModel)]="description" [suggestions]="descriptionSuggestions"
-                (completeMethod)="filterDescription($event)" [forceSelection]="false" placeholder="description" />
-            <p-datepicker [(ngModel)]="dateFrom" [showTime]="true" dateFormat="yy-mm-dd" placeholder="date_from"
-                [showIcon]="true" appendTo="body" />
-            <p-datepicker [(ngModel)]="dateTo" [showTime]="true" dateFormat="yy-mm-dd" placeholder="date_to"
-                [showIcon]="true" appendTo="body" />
-            <p-inputnumber [(ngModel)]="page" [min]="1" placeholder="page" [useGrouping]="false" />
-            <p-inputnumber [(ngModel)]="pageSize" [min]="1" [max]="200" placeholder="page_size" [useGrouping]="false" />
+            <div class="filter-field">
+                <label for="eventType">Tipo de evento</label>
+                <p-select inputId="eventType" [options]="eventTypes" optionLabel="label" optionValue="value"
+                    [(ngModel)]="eventType" placeholder="Selecciona un tipo" [showClear]="true" />
+            </div>
+
+            <div class="filter-field">
+                <label for="description">Descripcion</label>
+                <p-autocomplete inputId="description" [(ngModel)]="description" [suggestions]="descriptionSuggestions"
+                    (completeMethod)="filterDescription($event)" [forceSelection]="false"
+                    placeholder="Escribe una descripcion" />
+            </div>
+
+            <div class="filter-field">
+                <label for="dateFrom">Fecha desde</label>
+                <p-datepicker inputId="dateFrom" [(ngModel)]="dateFrom" [showTime]="true" dateFormat="yy-mm-dd"
+                    placeholder="Selecciona fecha inicial" [showIcon]="true" appendTo="body" />
+            </div>
+
+            <div class="filter-field">
+                <label for="dateTo">Fecha hasta</label>
+                <p-datepicker inputId="dateTo" [(ngModel)]="dateTo" [showTime]="true" dateFormat="yy-mm-dd"
+                    placeholder="Selecciona fecha final" [showIcon]="true" appendTo="body" />
+            </div>
+
+            <div class="filter-field">
+                <label for="page">Pagina</label>
+                <p-inputnumber inputId="page" [(ngModel)]="page" [min]="1" placeholder="Ej: 1" [useGrouping]="false" />
+            </div>
+
+            <div class="filter-field">
+                <label for="pageSize">Registros por pagina</label>
+                <p-inputnumber inputId="pageSize" [(ngModel)]="pageSize" [min]="1" [max]="200" placeholder="Ej: 50"
+                    [useGrouping]="false" />
+            </div>
         </div>
 
         <p-divider />
@@ -29,17 +55,18 @@
                 <tr>
                     <th scope="col">Tipo</th>
                     <th scope="col">Descripcion</th>
-                    <th scope="col">User</th>
+                    <th scope="col">Usuario</th>
                     <th scope="col">Fecha</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-event>
                 <tr>
                     <td>
-                        <p-tag [value]="event.event_type" [severity]="severityForEvent(event.event_type)" />
+                        <p-tag [value]="eventTypeLabel(event.event_type)"
+                            [severity]="severityForEvent(event.event_type)" />
                     </td>
                     <td>{{ event.description }}</td>
-                    <td>{{ event.user_id || 'system' }}</td>
+                    <td>{{ event.user_id || 'Sistema' }}</td>
                     <td>{{ event.created_at | date: 'short' }}</td>
                 </tr>
             </ng-template>

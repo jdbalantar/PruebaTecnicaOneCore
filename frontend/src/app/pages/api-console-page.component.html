@@ -1,99 +1,101 @@
 <main class="console-page">
-  <p-toolbar styleClass="console-toolbar">
-    <ng-template #start>
-      <div>
-        <h2>OneCore Console</h2>
-        <small>Panel de estado e integracion</small>
-      </div>
-    </ng-template>
-    <ng-template #end>
-      <div class="toolbar-actions">
-        <p-button icon="pi pi-sync" label="Refrescar estado" severity="secondary" (onClick)="refreshSystemHealth()" />
-      </div>
-    </ng-template>
-  </p-toolbar>
+    <p-toolbar styleClass="console-toolbar">
+        <ng-template #start>
+            <div>
+                <h2>Panel OneCore</h2>
+                <small>Panel de estado e integracion</small>
+            </div>
+        </ng-template>
+        <ng-template #end>
+            <div class="toolbar-actions">
+                <p-button icon="pi pi-sync" label="Refrescar estado" severity="secondary"
+                    (onClick)="refreshSystemHealth()" />
+            </div>
+        </ng-template>
+    </p-toolbar>
 
-  <p-message *ngIf="apiError" severity="error" [text]="apiError" styleClass="w-full" />
+    <p-message *ngIf="apiError" severity="error" [text]="apiError" styleClass="w-full" />
 
-  <section class="widgets-grid">
-    <p-card class="kpi-card" *ngFor="let item of kpis; let i = index">
-      <div class="kpi-head">
-        <p-tag [value]="item.title" [severity]="item.color"></p-tag>
-        <i class="pi" [ngClass]="item.icon"></i>
-      </div>
-      <div class="kpi-value">{{ item.value }}</div>
-    </p-card>
-  </section>
+    <section class="widgets-grid">
+        <p-card class="kpi-card" *ngFor="let item of kpis; let i = index">
+            <div class="kpi-head">
+                <p-tag [value]="item.title" [severity]="item.color"></p-tag>
+                <i class="pi" [ngClass]="item.icon"></i>
+            </div>
+            <div class="kpi-value">{{ item.value }}</div>
+        </p-card>
+    </section>
 
-  <section class="routes-grid">
-    <p-card class="route-card" *ngFor="let card of navigationCards">
-      <div class="route-card-head">
-        <i class="pi" [ngClass]="card.icon"></i>
-        <h3>{{ card.title }}</h3>
-      </div>
-      <p>{{ card.description }}</p>
-      <p-button label="Abrir" icon="pi pi-arrow-right" [routerLink]="card.route"></p-button>
-    </p-card>
-  </section>
+    <section class="routes-grid">
+        <p-card class="route-card" *ngFor="let card of navigationCards">
+            <div class="route-card-head">
+                <i class="pi" [ngClass]="card.icon"></i>
+                <h3>{{ card.title }}</h3>
+            </div>
+            <p>{{ card.description }}</p>
+            <p-button label="Abrir" icon="pi pi-arrow-right" [routerLink]="card.route"></p-button>
+        </p-card>
+    </section>
 
-  <section class="status-grid">
-    <p-card class="kpi-card wide">
-      <ng-template #title>Estado de Integracion</ng-template>
-      <p-progressbar [value]="integrationScore"></p-progressbar>
-      <small>{{ integrationScore }}% de cobertura del flujo backend</small>
-      <div class="toolbar-actions mt-3">
-        <p-tag [value]="systemHealth?.status || 'degraded'" [severity]="dashboardStatus()"></p-tag>
-        <small *ngIf="healthError">{{ healthError }}</small>
-      </div>
-    </p-card>
+    <section class="status-grid">
+        <p-card class="kpi-card wide">
+            <ng-template #title>Estado de Integracion</ng-template>
+            <p-progressbar [value]="integrationScore"></p-progressbar>
+            <small>{{ integrationScore }}% de cobertura del flujo backend</small>
+            <div class="toolbar-actions mt-3">
+                <p-tag [value]="systemStatusLabel(systemHealth?.status)" [severity]="dashboardStatus()"></p-tag>
+                <small *ngIf="healthError">{{ healthError }}</small>
+            </div>
+        </p-card>
 
-    <p-card class="kpi-card wide">
-      <ng-template #title>Infra Health</ng-template>
-      <div class="health-head">
-        <small *ngIf="systemHealth">Actualizado: {{ systemHealth.timestamp | date: 'shortTime' }}</small>
-        <p-button label="Refrescar" icon="pi pi-sync" severity="secondary" size="small"
-          (onClick)="refreshSystemHealth()"></p-button>
-      </div>
+        <p-card class="kpi-card wide">
+            <ng-template #title>Estado de infraestructura</ng-template>
+            <div class="health-head">
+                <small *ngIf="systemHealth">Actualizado: {{ systemHealth.timestamp | date: 'shortTime' }}</small>
+                <p-button label="Refrescar" icon="pi pi-sync" severity="secondary" size="small"
+                    (onClick)="refreshSystemHealth()"></p-button>
+            </div>
 
-      <div class="health-grid" *ngIf="systemHealth; else noHealth">
-        <div class="health-item">
-          <span>API</span>
-          <p-tag [value]="systemHealth.services.api.status.toUpperCase()"
-            [severity]="healthSeverity(systemHealth.services.api.status)"></p-tag>
-        </div>
-        <div class="health-item">
-          <span>SQL Server</span>
-          <p-tag [value]="systemHealth.services.database.status.toUpperCase()"
-            [severity]="healthSeverity(systemHealth.services.database.status)"></p-tag>
-        </div>
-        <div class="health-item">
-          <span>Storage (MinIO)</span>
-          <p-tag [value]="systemHealth.services.storage.status.toUpperCase()"
-            [severity]="healthSeverity(systemHealth.services.storage.status)"></p-tag>
-        </div>
-      </div>
+            <div class="health-grid" *ngIf="systemHealth; else noHealth">
+                <div class="health-item">
+                    <span>API</span>
+                    <p-tag [value]="serviceStatusLabel(systemHealth.services.api.status)"
+                        [severity]="healthSeverity(systemHealth.services.api.status)"></p-tag>
+                </div>
+                <div class="health-item">
+                    <span>SQL Server</span>
+                    <p-tag [value]="serviceStatusLabel(systemHealth.services.database.status)"
+                        [severity]="healthSeverity(systemHealth.services.database.status)"></p-tag>
+                </div>
+                <div class="health-item">
+                    <span>Almacenamiento (MinIO)</span>
+                    <p-tag [value]="serviceStatusLabel(systemHealth.services.storage.status)"
+                        [severity]="healthSeverity(systemHealth.services.storage.status)"></p-tag>
+                </div>
+            </div>
 
-      <p-message *ngIf="healthError" severity="warn" [text]="healthError" styleClass="w-full mt-3" />
+            <p-message *ngIf="healthError" severity="warn" [text]="healthError" styleClass="w-full mt-3" />
 
-      <ng-template #noHealth>
-        <small>Consultando estado del sistema...</small>
-      </ng-template>
-    </p-card>
-  </section>
+            <ng-template #noHealth>
+                <small>Consultando estado del sistema...</small>
+            </ng-template>
+        </p-card>
+    </section>
 
-  <section class="recent-grid">
-    <p-card class="recent-card">
-      <ng-template #title>Actividad Reciente</ng-template>
-      <div class="recent-list" *ngIf="recentEvents().length; else noActivity">
-        <div class="recent-row" *ngFor="let event of recentEvents()">
-          <p-tag [value]="event.event_type" [severity]="severityForEvent(event.event_type)"></p-tag>
-          <span>{{ event.description }}</span>
-          <small>{{ event.created_at | date: 'short' }}</small>
-        </div>
-      </div>
-      <ng-template #noActivity>
-        <small>Aun no hay eventos cargados. Usa la pantalla Events para consultar.</small>
-      </ng-template>
-    </p-card>
-  </section>
+    <section class="recent-grid">
+        <p-card class="recent-card">
+            <ng-template #title>Actividad Reciente</ng-template>
+            <div class="recent-list" *ngIf="recentEvents().length; else noActivity">
+                <div class="recent-row" *ngFor="let event of recentEvents()">
+                    <p-tag [value]="eventTypeLabel(event.event_type)"
+                        [severity]="severityForEvent(event.event_type)"></p-tag>
+                    <span>{{ event.description }}</span>
+                    <small>{{ event.created_at | date: 'short' }}</small>
+                </div>
+            </div>
+            <ng-template #noActivity>
+                <small>Aun no hay eventos cargados. Usa la pantalla Eventos para consultar.</small>
+            </ng-template>
+        </p-card>
+    </section>
 </main>
