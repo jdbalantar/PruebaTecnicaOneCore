@@ -1,0 +1,78 @@
+PruebaTecnica - Documentacion General Actualizada
+
+1) Objetivo del sistema
+
+Aplicacion web para la evaluacion tecnica de OneCore que permite:
+
+- autenticacion con JWT
+- carga y validacion de archivos CSV
+- analisis de documentos PDF/JPG/PNG mediante IA
+- registro historico de eventos y exportacion a Excel
+
+2) Alcance funcional implementado
+
+Parte API:
+
+- login y refresh de token
+- upload de CSV con validaciones y control por rol
+- analisis de documentos con clasificacion y extraccion
+- listado y export de eventos
+- health de infraestructura
+
+Parte Web:
+
+- frontend SPA Angular para operar todos los modulos
+- dashboard con estado de servicios
+- formularios de login, upload CSV, analisis IA, eventos y refresh token
+
+3) Arquitectura
+
+Backend:
+
+- FastAPI + arquitectura hexagonal
+- dominio aislado (modelos, puertos, servicios)
+- infraestructura por adapters (DB, S3, IA)
+
+Frontend:
+
+- Angular 21 + PrimeNG
+- guards de autenticacion
+- interceptores de auth, loading y contrato de respuesta
+
+4) Integraciones
+
+- SQL Server via SQLAlchemy/pyodbc
+- AWS S3 o MinIO via boto3
+- IA por proveedor configurable:
+  - OpenAI
+  - Gemini
+  - Ollama local
+
+5) Calidad y pruebas
+
+- pruebas unitarias e integracion con pytest
+- lint/formato con Ruff
+- CI en GitHub Actions con cobertura minima
+
+6) Operacion en desarrollo
+
+Backend:
+
+- instalar deps
+- configurar .env
+- ejecutar migraciones
+- levantar uvicorn
+
+Frontend:
+
+- npm install
+- npm start
+- verificar apiBaseUrl en frontend/src/environments/environment.ts
+
+7) Documentos de referencia
+
+- README.md
+- docs/ARCHITECTURE.md
+- docs/API_SPEC.md
+- docs/DEVELOPMENT.md
+- openspec/changes/onecore-prueba-tecnica/*

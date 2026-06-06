@@ -1,0 +1,14 @@
+change: onecore-prueba-tecnica
+project: PruebaTecnica
+store: openspec
+created: 2026-06-05
+status: applied
+
+dag:
+  proposal: completed
+  spec: completed
+  design: completed
+  tasks: completed
+  apply: completed
+  verify: completed
+  archive: pending
