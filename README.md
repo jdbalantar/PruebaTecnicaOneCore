@@ -4,7 +4,7 @@ Sistema full-stack para evaluacion tecnica con:
 
 - Autenticacion JWT (RS256)
 - Carga y validacion de CSV
-- Analisis de documentos con IA (OpenAI, Gemini u Ollama)
+- Analisis de documentos con IA (Gemini)
 - Historial de eventos con filtros y exportacion a Excel
 - API REST en FastAPI + frontend SPA en Angular
 
@@ -47,9 +47,7 @@ Backend:
 - python-jose + passlib/bcrypt
 - boto3 (S3/MinIO)
 - openpyxl (export xlsx)
-- OpenAI SDK
 - httpx
-- OCR stack (Pillow, pytesseract, pypdfium2)
 
 Frontend:
 
@@ -81,7 +79,7 @@ DevOps/Calidad:
 - Infrastructure:
   - Repositorios SQL Server
   - Adapter S3/MinIO
-  - Adapters IA (OpenAI, Gemini, Ollama)
+  - Adapter IA (Gemini)
   - DI container
 
 Punto de entrada:
@@ -110,17 +108,14 @@ Punto de entrada:
 
 1. Copiar .env.example a .env.
 2. Completar credenciales y llaves.
-3. Configurar proveedor IA con AI_PROVIDER:
-   - openai
-   - gemini
-   - ollama
+3. Configurar proveedor IA con AI_PROVIDER=gemini.
 
 Variables relevantes:
 
 - JWT: JWT_PRIVATE_KEY, JWT_PUBLIC_KEY
 - DB: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_DRIVER
 - S3: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, S3_ENDPOINT_URL
-- IA: AI_PROVIDER y variables del proveedor elegido
+- IA: AI_PROVIDER, GEMINI_API_KEY, GEMINI_API_BASE, GEMINI_MODEL_CLASSIFY, GEMINI_MODEL_EXTRACT
 
 ## Levantar Proyecto en Desarrollo
 
@@ -221,16 +216,12 @@ Migraciones dentro de contenedor app:
 
 - revisar GEMINI_API_KEY, proyecto asociado y modelo configurado
 
-3. conexion rechazada a Ollama:
-
-- validar servicio en OLLAMA_BASE_URL y modelo descargado
-
-4. requests pegando al backend equivocado:
+3. requests pegando al backend equivocado:
 
 - revisar frontend/src/environments/environment.ts
 - evitar multiples instancias uvicorn en puertos distintos
 
-5. errores SQL Server/ODBC:
+4. errores SQL Server/ODBC:
 
 - validar DB_DRIVER y conectividad DB
 
@@ -243,4 +234,4 @@ Migraciones dentro de contenedor app:
 
 ## Estado Actual de IA
 
-El backend soporta seleccion dinamica por AI_PROVIDER y adapters activos para OpenAI, Gemini y Ollama. En escenario de cuotas, pueden ocurrir degradaciones dependiendo del proveedor configurado y su disponibilidad.
+El backend usa Gemini como proveedor IA soportado y activo. En escenario de cuotas, pueden ocurrir degradaciones por disponibilidad del proveedor.

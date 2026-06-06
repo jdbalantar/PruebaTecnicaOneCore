@@ -38,13 +38,11 @@ Excepcion:
 
 ## 5. IA
 
-Seleccion por AI_PROVIDER:
+Proveedor soportado por AI_PROVIDER:
 
-- openai
 - gemini
-- ollama
 
-Debe existir documentacion de variables por proveedor y troubleshooting de errores 401/404/429 y conexion.
+Debe existir documentacion de variables Gemini y troubleshooting de errores 401/404/429.
 
 ## 6. Operacion Local
 

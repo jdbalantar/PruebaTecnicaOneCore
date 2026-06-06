@@ -20,7 +20,7 @@ PruebaTecnica implementa una arquitectura hexagonal (ports and adapters) con Fas
   - Implementaciones concretas de puertos
   - SQL Server + SQLAlchemy en src/infrastructure/db y src/infrastructure/repositories
   - Storage S3/MinIO en src/infrastructure/storage/s3_adapter.py
-  - Adaptadores IA (OpenAI, Gemini, Ollama) en src/infrastructure/ai
+  - Adaptador IA (Gemini) en src/infrastructure/ai
   - Composición de servicios por DI en src/infrastructure/di.py
 
 ## Flujo de Dependencias
@@ -34,13 +34,11 @@ Regla principal: dependencias hacia adentro.
 
 ## Seleccion de Proveedor IA
 
-La seleccion de proveedor es por variable AI_PROVIDER y se resuelve en src/infrastructure/di.py.
+El proveedor IA se define con AI_PROVIDER=gemini y se resuelve en src/infrastructure/di.py.
 
 Opciones soportadas:
 
-- openai
 - gemini
-- ollama
 
 ## Contrato API
 

@@ -17,8 +17,6 @@ Frontend:
 Opcional:
 
 - Docker + Docker Compose
-- Ollama (si AI_PROVIDER=ollama)
-- Tesseract OCR (si usas OCR con Ollama)
 
 ## Setup Backend
 
@@ -53,13 +51,7 @@ Opcional:
 
 ## Variables IA Clave
 
-- AI_PROVIDER: openai | gemini | ollama
-
-OpenAI:
-
-- OPENAI_API_KEY
-- OPENAI_MODEL_CLASSIFY
-- OPENAI_MODEL_EXTRACT
+- AI_PROVIDER: gemini
 
 Gemini:
 
@@ -67,22 +59,6 @@ Gemini:
 - GEMINI_API_BASE
 - GEMINI_MODEL_CLASSIFY
 - GEMINI_MODEL_EXTRACT
-
-Ollama:
-
-- OLLAMA_BASE_URL
-- OLLAMA_MODEL_CLASSIFY
-- OLLAMA_MODEL_EXTRACT
-- OLLAMA_REQUEST_TIMEOUT_SECONDS
-- OLLAMA_OCR_TEXT_MAX_CHARS
-
-OCR:
-
-- OCR_ENABLED
-- OCR_LANG
-- OCR_TESSERACT_CMD
-- OCR_PDF_MAX_PAGES
-- OCR_MIN_TEXT_CHARS
 
 ## Comandos de Calidad y Tests
 
@@ -117,16 +93,11 @@ GitHub Actions en .github/workflows/ci.yml:
 - validar GEMINI_API_KEY, proyecto y billing
 - validar modelo activo y no deprecado
 
-3. Error de conexion a Ollama:
-
-- verificar servicio en OLLAMA_BASE_URL
-- verificar modelo descargado
-
-4. Requests yendo al backend equivocado:
+3. Requests yendo al backend equivocado:
 
 - revisar frontend/src/environments/environment.ts
 - evitar multiples uvicorn activos en puertos distintos
 
-5. DB connection issues:
+4. DB connection issues:
 
 - revisar DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DRIVER

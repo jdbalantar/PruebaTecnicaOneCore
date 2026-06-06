@@ -43,10 +43,7 @@ Frontend:
 
 - SQL Server via SQLAlchemy/pyodbc
 - AWS S3 o MinIO via boto3
-- IA por proveedor configurable:
-  - OpenAI
-  - Gemini
-  - Ollama local
+- IA por proveedor Gemini
 
 5) Calidad y pruebas
 
