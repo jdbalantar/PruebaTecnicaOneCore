@@ -92,7 +92,7 @@ class TestAuthServiceLogin:
         assert len(token) > 0
 
     def test_login_jwt_contains_user_id_and_rol(self, mock_user_repo, mock_settings):
-        """Issued JWT must embed the user's UUID as 'sub' and role as 'rol'."""
+        """Issued JWT must embed user UUID claims and role."""
         mock_user_repo.find_by_username.return_value = ACTIVE_USER
         service = _make_service(mock_user_repo, mock_settings)
 
@@ -100,6 +100,7 @@ class TestAuthServiceLogin:
         payload = _decode(token, mock_settings)
 
         assert payload["sub"] == str(ACTIVE_USER.id)
+        assert payload["id_usuario"] == str(ACTIVE_USER.id)
         assert payload["rol"] == UserRole.UPLOADER.value
 
     def test_login_jwt_expires_in_15_minutes(self, mock_user_repo, mock_settings):
@@ -156,6 +157,25 @@ class TestAuthServiceLogin:
         jti_b = _decode(token_b, mock_settings)["jti"]
 
         assert jti_a != jti_b
+
+    def test_login_calls_find_by_username_once(self, mock_user_repo, mock_settings):
+        """login() must perform exactly one repository lookup by username."""
+        mock_user_repo.find_by_username.return_value = ACTIVE_USER
+        service = _make_service(mock_user_repo, mock_settings)
+
+        service.login("testuser", "password123")
+
+        mock_user_repo.find_by_username.assert_called_once_with("testuser")
+
+    def test_login_jwt_contains_iat_claim(self, mock_user_repo, mock_settings):
+        """Issued JWT must contain an issued-at timestamp claim (iat)."""
+        mock_user_repo.find_by_username.return_value = ACTIVE_USER
+        service = _make_service(mock_user_repo, mock_settings)
+
+        token = service.login("testuser", "password123")
+        payload = _decode(token, mock_settings)
+
+        assert "iat" in payload
 
 
 # ---------------------------------------------------------------------------
@@ -230,6 +250,96 @@ class TestAuthServiceRefreshToken:
 
         assert new_exp >= original_exp
 
+    def test_refresh_preserves_user_identity_claims(self, mock_user_repo, mock_settings):
+        """Refreshed token must keep the same user identity values."""
+        mock_user_repo.find_by_username.return_value = ACTIVE_USER
+        service = _make_service(mock_user_repo, mock_settings)
+        original = service.login("testuser", "password123")
+
+        new_token = service.refresh_token(original)
+        payload = _decode(new_token, mock_settings)
+
+        assert payload["sub"] == str(ACTIVE_USER.id)
+        assert payload["id_usuario"] == str(ACTIVE_USER.id)
+
+    def test_refresh_preserves_role_claim(self, mock_user_repo, mock_settings):
+        """Refreshed token must preserve rol claim value."""
+        mock_user_repo.find_by_username.return_value = ACTIVE_USER
+        service = _make_service(mock_user_repo, mock_settings)
+        original = service.login("testuser", "password123")
+
+        new_token = service.refresh_token(original)
+        payload = _decode(new_token, mock_settings)
+
+        assert payload["rol"] == UserRole.UPLOADER.value
+
+    def test_refresh_generates_new_jti(self, mock_user_repo, mock_settings):
+        """Refresh must produce a token with a different jti."""
+        mock_user_repo.find_by_username.return_value = ACTIVE_USER
+        service = _make_service(mock_user_repo, mock_settings)
+        original = service.login("testuser", "password123")
+
+        old_jti = _decode(original, mock_settings)["jti"]
+        new_token = service.refresh_token(original)
+        new_jti = _decode(new_token, mock_settings)["jti"]
+
+        assert new_jti != old_jti
+
+    def test_refresh_accepts_legacy_token_with_only_sub(self, mock_user_repo, mock_settings):
+        """Backward compatibility: refresh should work when token has only sub + rol."""
+        service = _make_service(mock_user_repo, mock_settings)
+        legacy = jose_jwt.encode(
+            {
+                "sub": str(ACTIVE_USER.id),
+                "rol": UserRole.UPLOADER.value,
+                "exp": datetime.now(timezone.utc) + timedelta(minutes=15),
+            },
+            mock_settings.JWT_PRIVATE_KEY,
+            algorithm=mock_settings.JWT_ALGORITHM,
+        )
+
+        new_token = service.refresh_token(legacy)
+        payload = _decode(new_token, mock_settings)
+
+        assert payload["sub"] == str(ACTIVE_USER.id)
+        assert payload["id_usuario"] == str(ACTIVE_USER.id)
+
+    def test_refresh_accepts_token_with_only_id_usuario(self, mock_user_repo, mock_settings):
+        """Refresh should also work when legacy token uses id_usuario without sub."""
+        service = _make_service(mock_user_repo, mock_settings)
+        legacy = jose_jwt.encode(
+            {
+                "id_usuario": str(ACTIVE_USER.id),
+                "rol": UserRole.UPLOADER.value,
+                "exp": datetime.now(timezone.utc) + timedelta(minutes=15),
+            },
+            mock_settings.JWT_PRIVATE_KEY,
+            algorithm=mock_settings.JWT_ALGORITHM,
+        )
+
+        new_token = service.refresh_token(legacy)
+        payload = _decode(new_token, mock_settings)
+
+        assert payload["sub"] == str(ACTIVE_USER.id)
+        assert payload["id_usuario"] == str(ACTIVE_USER.id)
+
+    def test_refresh_missing_user_identifier_claim_raises_invalid_token(
+        self, mock_user_repo, mock_settings
+    ):
+        """A token lacking both sub and id_usuario must raise InvalidTokenError."""
+        service = _make_service(mock_user_repo, mock_settings)
+        invalid = jose_jwt.encode(
+            {
+                "rol": UserRole.UPLOADER.value,
+                "exp": datetime.now(timezone.utc) + timedelta(minutes=15),
+            },
+            mock_settings.JWT_PRIVATE_KEY,
+            algorithm=mock_settings.JWT_ALGORITHM,
+        )
+
+        with pytest.raises(InvalidTokenError):
+            service.refresh_token(invalid)
+
 
 # ---------------------------------------------------------------------------
 # Tests: VerifyToken
@@ -248,6 +358,7 @@ class TestAuthServiceVerifyToken:
         payload = service.verify_token(token)
 
         assert payload["sub"] == str(ACTIVE_USER.id)
+        assert payload["id_usuario"] == str(ACTIVE_USER.id)
         assert payload["rol"] == UserRole.UPLOADER.value
         assert "exp" in payload
         assert "jti" in payload
@@ -283,3 +394,79 @@ class TestAuthServiceVerifyToken:
 
         with pytest.raises(InvalidTokenError):
             service.verify_token(expired)
+
+    def test_verify_payload_contains_id_usuario_claim(self, mock_user_repo, mock_settings):
+        """Decoded payload must expose id_usuario for downstream authorization."""
+        mock_user_repo.find_by_username.return_value = ACTIVE_USER
+        service = _make_service(mock_user_repo, mock_settings)
+
+        token = service.login("testuser", "password123")
+        payload = service.verify_token(token)
+
+        assert payload["id_usuario"] == str(ACTIVE_USER.id)
+
+    def test_verify_payload_contains_iat_claim(self, mock_user_repo, mock_settings):
+        """Decoded payload should include iat."""
+        mock_user_repo.find_by_username.return_value = ACTIVE_USER
+        service = _make_service(mock_user_repo, mock_settings)
+
+        token = service.login("testuser", "password123")
+        payload = service.verify_token(token)
+
+        assert "iat" in payload
+
+    def test_verify_payload_contains_exp_claim(self, mock_user_repo, mock_settings):
+        """Decoded payload should include exp."""
+        mock_user_repo.find_by_username.return_value = ACTIVE_USER
+        service = _make_service(mock_user_repo, mock_settings)
+
+        token = service.login("testuser", "password123")
+        payload = service.verify_token(token)
+
+        assert "exp" in payload
+
+    def test_verify_payload_contains_jti_claim(self, mock_user_repo, mock_settings):
+        """Decoded payload should include jti."""
+        mock_user_repo.find_by_username.return_value = ACTIVE_USER
+        service = _make_service(mock_user_repo, mock_settings)
+
+        token = service.login("testuser", "password123")
+        payload = service.verify_token(token)
+
+        assert "jti" in payload
+
+    def test_verify_rejects_empty_token_string(self, mock_user_repo, mock_settings):
+        """An empty token string must raise InvalidTokenError."""
+        service = _make_service(mock_user_repo, mock_settings)
+
+        with pytest.raises(InvalidTokenError):
+            service.verify_token("")
+
+    def test_verify_wrong_algorithm_raises_invalid_token(
+        self, mock_user_repo, mock_settings
+    ):
+        """A token signed with an unexpected algorithm must be rejected."""
+        service = _make_service(mock_user_repo, mock_settings)
+        wrong_alg = jose_jwt.encode(
+            {
+                "sub": str(ACTIVE_USER.id),
+                "id_usuario": str(ACTIVE_USER.id),
+                "rol": UserRole.UPLOADER.value,
+                "exp": datetime.now(timezone.utc) + timedelta(minutes=15),
+            },
+            mock_settings.JWT_PRIVATE_KEY,
+            algorithm="HS384",
+        )
+
+        with pytest.raises(InvalidTokenError):
+            service.verify_token(wrong_alg)
+
+    def test_verify_payload_role_matches_expected(self, mock_user_repo, mock_settings):
+        """Decoded rol should remain unchanged for valid tokens."""
+        mock_user_repo.find_by_username.return_value = ACTIVE_USER
+        service = _make_service(mock_user_repo, mock_settings)
+
+        token = service.login("testuser", "password123")
+        payload = service.verify_token(token)
+
+        assert payload["rol"] == UserRole.UPLOADER.value

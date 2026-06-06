@@ -1,11 +1,10 @@
 """Files router — CSV upload and validation endpoint."""
 
 from typing import Annotated
-from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
-from src.application.dependencies import require_role
+from src.application.dependencies import get_user_id_from_payload, require_role
 from src.application.schemas.files import UploadResultResponse, ValidationErrorSchema
 from src.application.schemas.result import Result, ok
 from src.domain.services.file_upload_service import FileUploadService
@@ -47,7 +46,7 @@ async def upload_csv(
         raise HTTPException(status_code=400, detail="Only CSV files are accepted")
 
     file_bytes = await file.read()
-    user_id = UUID(payload["sub"])
+    user_id = get_user_id_from_payload(payload)
 
     result = service.upload_and_validate(
         file_bytes=file_bytes,

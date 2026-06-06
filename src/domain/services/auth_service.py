@@ -83,7 +83,11 @@ class AuthService:
         except JWTError as exc:
             raise InvalidTokenError(str(exc)) from exc
 
-        return self._create_token(payload["sub"], payload["rol"])
+        user_id = str(payload.get("id_usuario") or payload.get("sub") or "")
+        if not user_id:
+            raise InvalidTokenError("Token missing user identifier claim")
+
+        return self._create_token(user_id, payload["rol"])
 
     def verify_token(self, token: str) -> dict:
         """Decode and validate a JWT, returning its payload.
@@ -135,6 +139,7 @@ class AuthService:
         now = datetime.now(timezone.utc)
         payload = {
             "sub": user_id,
+            "id_usuario": user_id,
             "rol": rol,
             "iat": now,
             "exp": now + timedelta(minutes=self._settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES),

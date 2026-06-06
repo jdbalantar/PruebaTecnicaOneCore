@@ -1,5 +1,7 @@
 """FastAPI dependency functions for authentication and authorization."""
 
+from uuid import UUID
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
@@ -54,3 +56,24 @@ def require_role(*roles: str):
         return payload
 
     return _checker
+
+
+def get_user_id_from_payload(payload: dict) -> UUID:
+    """Return the authenticated user UUID from JWT payload claims.
+
+    Supports both current ``id_usuario`` and legacy ``sub`` claim names.
+    """
+    user_id = payload.get("id_usuario") or payload.get("sub")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token missing user identifier claim",
+        )
+
+    try:
+        return UUID(str(user_id))
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token contains an invalid user identifier",
+        ) from exc

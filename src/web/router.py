@@ -159,7 +159,9 @@ async def document_analyze_partial(
         try:
             auth_service = get_auth_service(db)
             payload = auth_service.verify_token(credentials.credentials)
-            user_id = UUID(payload["sub"])
+            user_claim = payload.get("id_usuario") or payload.get("sub")
+            if user_claim:
+                user_id = UUID(str(user_claim))
         except Exception:
             pass
         finally:

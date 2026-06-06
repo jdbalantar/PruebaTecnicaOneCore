@@ -2,11 +2,10 @@
 
 import dataclasses
 from typing import Annotated
-from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
-from src.application.dependencies import get_current_user_payload
+from src.application.dependencies import get_current_user_payload, get_user_id_from_payload
 from src.application.schemas.documents import AnalysisResultResponse
 from src.application.schemas.result import Result, ok
 from src.domain.services.document_analysis_service import DocumentAnalysisService
@@ -45,7 +44,7 @@ async def analyze_document(
         )
 
     file_bytes = await file.read()
-    user_id = UUID(payload["sub"])
+    user_id = get_user_id_from_payload(payload)
 
     result = service.analyze(
         file_bytes=file_bytes,
