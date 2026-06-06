@@ -42,7 +42,10 @@ def _build_db_url(s) -> str:
     )
 
 
-config.set_main_option("sqlalchemy.url", _build_db_url(_settings))
+config.set_main_option(
+    "sqlalchemy.url",
+    _build_db_url(_settings).replace("%", "%%"),
+)
 
 # ---------------------------------------------------------------------------
 # Import ORM metadata so Alembic can detect model changes for autogenerate.
