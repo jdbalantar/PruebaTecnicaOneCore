@@ -3,7 +3,7 @@
 import dataclasses
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 
 from src.application.dependencies import get_current_user_payload, get_user_id_from_payload
 from src.application.schemas.documents import AnalysisResultResponse
@@ -21,6 +21,7 @@ async def analyze_document(
     file: Annotated[UploadFile, File(...)],
     payload: Annotated[dict, Depends(get_current_user_payload)],
     service: Annotated[DocumentAnalysisService, Depends(get_document_analysis_service)],
+    storage_provider: Annotated[str, Form()] = "minio",
 ) -> Result[AnalysisResultResponse]:
     """Uploads a PDF/JPG/PNG document, classifies it using AI, and extracts structured data.
 
@@ -51,6 +52,7 @@ async def analyze_document(
         filename=file.filename,
         content_type=file.content_type,
         user_id=user_id,
+        storage_provider=storage_provider,
     )
 
     extracted = None
@@ -66,5 +68,7 @@ async def analyze_document(
             ai_model=result.ai_model,
             fallback_used=result.fallback_used,
             fallback_reason=result.fallback_reason,
+            storage_provider=result.storage_provider,
+            storage_bucket=result.storage_bucket,
         )
     )

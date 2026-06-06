@@ -35,9 +35,15 @@ class FileUploadService:
         storage: IFileStoragePort,
         event_repo: IEventRepository,
         settings,
+        storage_by_provider: dict[str, IFileStoragePort] | None = None,
     ) -> None:
         self._csv_repo = csv_repo
         self._storage = storage
+        self._storage_by_provider = {"minio": storage}
+        if storage_by_provider:
+            self._storage_by_provider.update(
+                {k.strip().lower(): v for k, v in storage_by_provider.items()}
+            )
         self._event_repo = event_repo
         self._settings = settings
 
@@ -52,6 +58,7 @@ class FileUploadService:
         validation_mode: str,
         allow_duplicates: bool,
         user_id: UUID,
+        storage_provider: str | None = None,
     ) -> UploadResult:
         """Validate CSV content, upload to S3, persist rows to DB, and log events.
 
@@ -132,12 +139,15 @@ class FileUploadService:
             )
 
         # 6. Upload raw file to S3
+        selected_provider, selected_storage, bucket = self._resolve_storage_for_csv(
+            storage_provider
+        )
+
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         s3_key = f"csv/{user_id}/{timestamp}_{filename}"
-        bucket = self._settings.S3_BUCKET_CSV
 
         try:
-            self._storage.upload_file(
+            selected_storage.upload_file(
                 file_bytes=file_bytes,
                 key=s3_key,
                 bucket=bucket,
@@ -182,6 +192,7 @@ class FileUploadService:
                 "total_rows": total_rows,
                 "s3_key": s3_key,
                 "s3_bucket": bucket,
+                "storage_provider": selected_provider,
             },
             user_id=user_id,
         )
@@ -206,12 +217,32 @@ class FileUploadService:
             upload_id=upload_id,
             filename=filename,
             s3_key=s3_key,
+            storage_provider=selected_provider,
+            storage_bucket=bucket,
             total_rows=total_rows,
             valid_rows=valid_rows,
             error_rows=error_rows,
             validations=all_validation_errors,
             status=status,
         )
+
+    def _resolve_storage_for_csv(
+        self,
+        storage_provider: str | None,
+    ) -> tuple[str, IFileStoragePort, str]:
+        provider = (storage_provider or self._settings.STORAGE_DEFAULT_PROVIDER or "minio").strip().lower()
+        selected_storage = self._storage_by_provider.get(provider)
+        if selected_storage is None:
+            raise ValidationError(
+                f"Unsupported storage provider '{provider}'. Allowed providers: minio, localstack"
+            )
+
+        if provider == "localstack":
+            bucket = self._settings.LOCALSTACK_BUCKET_CSV
+        else:
+            bucket = self._settings.MINIO_BUCKET_CSV or self._settings.S3_BUCKET_CSV
+
+        return provider, selected_storage, bucket
 
     # ------------------------------------------------------------------
     # Private helpers

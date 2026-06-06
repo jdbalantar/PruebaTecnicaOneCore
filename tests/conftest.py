@@ -27,6 +27,11 @@ def mock_settings():
     settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 15
     settings.S3_BUCKET_CSV = "test-csv-bucket"
     settings.S3_BUCKET_DOCS = "test-docs-bucket"
+    settings.STORAGE_DEFAULT_PROVIDER = "minio"
+    settings.MINIO_BUCKET_CSV = "test-csv-bucket"
+    settings.MINIO_BUCKET_DOCS = "test-docs-bucket"
+    settings.LOCALSTACK_BUCKET_CSV = "test-csv-bucket-localstack"
+    settings.LOCALSTACK_BUCKET_DOCS = "test-docs-bucket-localstack"
     settings.CSV_MAX_FILE_SIZE_MB = 10
     settings.CSV_MAX_ROWS = 50000
     settings.AI_PROVIDER = "gemini"

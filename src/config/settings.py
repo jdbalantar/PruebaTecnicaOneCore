@@ -48,6 +48,23 @@ class Settings(BaseSettings):
     S3_BUCKET_CSV: str = "onecore-uploads"
     S3_BUCKET_DOCS: str = "onecore-documents"
 
+    # --------------- Storage Provider ---------------
+    STORAGE_DEFAULT_PROVIDER: str = "minio"
+
+    # --------------- MinIO (S3 compatible) ---------------
+    MINIO_ENDPOINT_URL: str | None = None
+    MINIO_ACCESS_KEY_ID: str | None = None
+    MINIO_SECRET_ACCESS_KEY: str | None = None
+    MINIO_BUCKET_CSV: str | None = None
+    MINIO_BUCKET_DOCS: str | None = None
+
+    # --------------- LocalStack S3 (S3 compatible) ---------------
+    LOCALSTACK_ENDPOINT_URL: str = "http://localhost:4566"
+    LOCALSTACK_ACCESS_KEY_ID: str = "test"
+    LOCALSTACK_SECRET_ACCESS_KEY: str = "test"
+    LOCALSTACK_BUCKET_CSV: str = "onecore-uploads-localstack"
+    LOCALSTACK_BUCKET_DOCS: str = "onecore-documents-localstack"
+
     # --------------- AI Provider ---------------
     AI_PROVIDER: str = "gemini"
 

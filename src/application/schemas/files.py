@@ -18,6 +18,8 @@ class UploadResultResponse(BaseModel):
     upload_id: str
     filename: str
     s3_key: str
+    storage_provider: str | None = None
+    storage_bucket: str | None = None
     total_rows: int
     valid_rows: int
     error_rows: int

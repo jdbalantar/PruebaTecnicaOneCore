@@ -12,6 +12,8 @@
                 label="Descargar plantilla CSV" (onClick)="downloadTemplate()" />
             <p-select [options]="validationOptions" optionLabel="label" optionValue="value" [(ngModel)]="validationMode"
                 placeholder="Modo de validacion" />
+            <p-select [options]="storageOptions" optionLabel="label" optionValue="value" [(ngModel)]="storageProvider"
+                placeholder="Proveedor de almacenamiento" />
             <div class="inline-row">
                 <p-checkbox [(ngModel)]="allowDuplicates" [binary]="true" inputId="dups-route" />
                 <label for="dups-route">Permitir duplicados</label>
@@ -33,6 +35,8 @@
             <div class="kv-grid">
                 <div><strong>Archivo:</strong> {{ result.filename }}</div>
                 <div><strong>Ruta de almacenamiento:</strong> {{ result.s3_key }}</div>
+                <div><strong>Proveedor:</strong> {{ result.storage_provider || '-' }}</div>
+                <div><strong>Bucket:</strong> {{ result.storage_bucket || '-' }}</div>
                 <div><strong>Total filas:</strong> {{ result.total_rows }}</div>
                 <div><strong>Validas:</strong> {{ result.valid_rows }}</div>
                 <div><strong>Con error:</strong> {{ result.error_rows }}</div>

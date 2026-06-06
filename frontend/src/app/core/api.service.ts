@@ -30,18 +30,25 @@ export class ApiService {
     return this.http.post<ApiResult<TokenResponse>>(`${this.baseUrl}/auth/refresh`, { token });
   }
 
-  uploadCsv(file: File, validationMode: string, allowDuplicates: boolean): Observable<ApiResult<UploadResultResponse>> {
+  uploadCsv(
+    file: File,
+    validationMode: string,
+    allowDuplicates: boolean,
+    storageProvider: string
+  ): Observable<ApiResult<UploadResultResponse>> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('validation_mode', validationMode);
     formData.append('allow_duplicates', String(allowDuplicates));
+    formData.append('storage_provider', storageProvider);
 
     return this.http.post<ApiResult<UploadResultResponse>>(`${this.baseUrl}/files/upload`, formData);
   }
 
-  analyzeDocument(file: File): Observable<ApiResult<AnalysisResultResponse>> {
+  analyzeDocument(file: File, storageProvider: string): Observable<ApiResult<AnalysisResultResponse>> {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('storage_provider', storageProvider);
 
     return this.http.post<ApiResult<AnalysisResultResponse>>(`${this.baseUrl}/documents/analyze`, formData);
   }

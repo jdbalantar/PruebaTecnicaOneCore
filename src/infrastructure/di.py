@@ -23,6 +23,27 @@ from src.infrastructure.repositories.user_repository import UserRepository
 from src.infrastructure.storage.s3_adapter import S3FileStorageAdapter
 
 
+def _build_storage_adapters(settings) -> dict[str, S3FileStorageAdapter]:
+    minio_endpoint = settings.MINIO_ENDPOINT_URL or settings.S3_ENDPOINT_URL
+    minio_access_key = settings.MINIO_ACCESS_KEY_ID or settings.AWS_ACCESS_KEY_ID
+    minio_secret_key = settings.MINIO_SECRET_ACCESS_KEY or settings.AWS_SECRET_ACCESS_KEY
+
+    return {
+        "minio": S3FileStorageAdapter(
+            settings,
+            endpoint_url=minio_endpoint,
+            access_key_id=minio_access_key,
+            secret_access_key=minio_secret_key,
+        ),
+        "localstack": S3FileStorageAdapter(
+            settings,
+            endpoint_url=settings.LOCALSTACK_ENDPOINT_URL,
+            access_key_id=settings.LOCALSTACK_ACCESS_KEY_ID,
+            secret_access_key=settings.LOCALSTACK_SECRET_ACCESS_KEY,
+        ),
+    }
+
+
 def _build_document_ai_adapter(settings):
     provider = settings.AI_PROVIDER.strip().lower()
     if provider in ("", "gemini"):
@@ -62,9 +83,11 @@ def get_file_upload_service(db: Session = Depends(get_db)) -> FileUploadService:
         A fully configured FileUploadService instance.
     """
     settings = get_settings()
+    storage_adapters = _build_storage_adapters(settings)
     return FileUploadService(
         csv_repo=CSVRepository(db),
-        storage=S3FileStorageAdapter(settings),
+        storage=storage_adapters.get("minio") or S3FileStorageAdapter(settings),
+        storage_by_provider=storage_adapters,
         event_repo=EventRepository(db),
         settings=settings,
     )
@@ -86,9 +109,11 @@ def get_document_analysis_service(
         A fully configured DocumentAnalysisService instance.
     """
     settings = get_settings()
+    storage_adapters = _build_storage_adapters(settings)
     return DocumentAnalysisService(
         ai_port=_build_document_ai_adapter(settings),
-        storage=S3FileStorageAdapter(settings),
+        storage=storage_adapters.get("minio") or S3FileStorageAdapter(settings),
+        storage_by_provider=storage_adapters,
         document_repo=DocumentRepository(db),
         event_repo=EventRepository(db),
         settings=settings,

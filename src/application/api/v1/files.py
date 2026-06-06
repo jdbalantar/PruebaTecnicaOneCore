@@ -23,6 +23,7 @@ async def upload_csv(
     service: Annotated[FileUploadService, Depends(get_file_upload_service)],
     validation_mode: Annotated[str, Form()] = "lenient",
     allow_duplicates: Annotated[bool, Form()] = False,
+    storage_provider: Annotated[str, Form()] = "minio",
 ) -> Result[UploadResultResponse]:
     """Uploads a CSV file, validates its content, and stores it to S3 and SQL Server.
 
@@ -54,6 +55,7 @@ async def upload_csv(
         validation_mode=validation_mode,
         allow_duplicates=allow_duplicates,
         user_id=user_id,
+        storage_provider=storage_provider,
     )
 
     return ok(
@@ -61,6 +63,8 @@ async def upload_csv(
             upload_id=str(result.upload_id),
             filename=result.filename,
             s3_key=result.s3_key,
+            storage_provider=result.storage_provider,
+            storage_bucket=result.storage_bucket,
             total_rows=result.total_rows,
             valid_rows=result.valid_rows,
             error_rows=result.error_rows,

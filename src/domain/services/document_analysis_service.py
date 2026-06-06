@@ -38,9 +38,15 @@ class DocumentAnalysisService:
         document_repo: IDocumentRepository,
         event_repo: IEventRepository,
         settings,
+        storage_by_provider: dict[str, IFileStoragePort] | None = None,
     ) -> None:
         self._ai_port = ai_port
         self._storage = storage
+        self._storage_by_provider = {"minio": storage}
+        if storage_by_provider:
+            self._storage_by_provider.update(
+                {k.strip().lower(): v for k, v in storage_by_provider.items()}
+            )
         self._document_repo = document_repo
         self._event_repo = event_repo
         self._settings = settings
@@ -58,6 +64,7 @@ class DocumentAnalysisService:
         filename: str,
         content_type: str,
         user_id: UUID | None,
+        storage_provider: str | None = None,
     ) -> AnalysisResult:
         """Upload a document to S3, classify it with AI, and extract structured data.
 
@@ -97,13 +104,16 @@ class DocumentAnalysisService:
             )
 
         # 2. Upload to S3
+        selected_provider, selected_storage, bucket = self._resolve_storage_for_docs(
+            storage_provider
+        )
+
         owner_segment = str(user_id) if user_id is not None else "anonymous"
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         s3_key = f"documents/{owner_segment}/{timestamp}_{filename}"
-        bucket = self._settings.S3_BUCKET_DOCS
 
         try:
-            self._storage.upload_file(
+            selected_storage.upload_file(
                 file_bytes=file_bytes,
                 key=s3_key,
                 bucket=bucket,
@@ -125,6 +135,7 @@ class DocumentAnalysisService:
                 "content_type": content_type,
                 "s3_key": s3_key,
                 "s3_bucket": bucket,
+                "storage_provider": selected_provider,
             },
             user_id=user_id,
         )
@@ -238,7 +249,27 @@ class DocumentAnalysisService:
             ai_model=ai_model,
             fallback_used=fallback_reason is not None,
             fallback_reason=fallback_reason,
+            storage_provider=selected_provider,
+            storage_bucket=bucket,
         )
+
+    def _resolve_storage_for_docs(
+        self,
+        storage_provider: str | None,
+    ) -> tuple[str, IFileStoragePort, str]:
+        provider = (storage_provider or self._settings.STORAGE_DEFAULT_PROVIDER or "minio").strip().lower()
+        selected_storage = self._storage_by_provider.get(provider)
+        if selected_storage is None:
+            raise ValidationError(
+                f"Unsupported storage provider '{provider}'. Allowed providers: minio, localstack"
+            )
+
+        if provider == "localstack":
+            bucket = self._settings.LOCALSTACK_BUCKET_DOCS
+        else:
+            bucket = self._settings.MINIO_BUCKET_DOCS or self._settings.S3_BUCKET_DOCS
+
+        return provider, selected_storage, bucket
 
     @staticmethod
     def _is_ai_quota_or_rate_limit_error(exc: Exception) -> bool:

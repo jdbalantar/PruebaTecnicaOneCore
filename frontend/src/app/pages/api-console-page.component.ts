@@ -16,6 +16,7 @@ import {
 } from '../core/api.models';
 
 type TagSeverity = 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast';
+type HealthStatus = 'up' | 'down' | undefined;
 
 interface KpiItem {
   title: string;
@@ -96,6 +97,14 @@ export class ApiConsolePageComponent implements OnInit, OnDestroy {
     private readonly api: ApiService
   ) {}
 
+  private get minioServiceStatus(): HealthStatus {
+    return this.systemHealth?.services.minio?.status ?? this.systemHealth?.services.storage?.status;
+  }
+
+  private get s3ServiceStatus(): HealthStatus {
+    return this.systemHealth?.services.s3?.status;
+  }
+
   ngOnInit(): void {
     this.refreshSystemHealth();
     this.loadRecentEvents();
@@ -149,8 +158,11 @@ export class ApiConsolePageComponent implements OnInit, OnDestroy {
 
   get integrationScore(): number {
     let score = 35;
-    if (this.systemHealth?.services.storage.status === 'up') {
-      score += 20;
+    if (this.minioServiceStatus === 'up') {
+      score += 10;
+    }
+    if (this.s3ServiceStatus === 'up') {
+      score += 10;
     }
     if (this.systemHealth?.services.database.status === 'up') {
       score += 20;
@@ -175,10 +187,16 @@ export class ApiConsolePageComponent implements OnInit, OnDestroy {
         color: 'info'
       },
       {
-        title: 'Storage',
-        value: this.systemHealth?.services.storage.status === 'up' ? 1 : 0,
+        title: 'MinIO',
+        value: this.minioServiceStatus === 'up' ? 1 : 0,
         icon: 'pi pi-file',
         color: 'success'
+      },
+      {
+        title: 'S3',
+        value: this.s3ServiceStatus === 'up' ? 1 : 0,
+        icon: 'pi pi-database',
+        color: 'info'
       },
       {
         title: 'Base de datos',

@@ -68,9 +68,15 @@
                         [severity]="healthSeverity(systemHealth.services.database.status)"></p-tag>
                 </div>
                 <div class="health-item">
-                    <span>Almacenamiento (MinIO)</span>
-                    <p-tag [value]="serviceStatusLabel(systemHealth.services.storage.status)"
-                        [severity]="healthSeverity(systemHealth.services.storage.status)"></p-tag>
+                    <span>MinIO</span>
+                    <p-tag
+                        [value]="serviceStatusLabel(systemHealth.services.minio.status || systemHealth.services.storage?.status)"
+                        [severity]="healthSeverity(systemHealth.services.minio.status || systemHealth.services.storage?.status)"></p-tag>
+                </div>
+                <div class="health-item">
+                    <span>S3</span>
+                    <p-tag [value]="serviceStatusLabel(systemHealth.services.s3.status)"
+                        [severity]="healthSeverity(systemHealth.services.s3.status)"></p-tag>
                 </div>
             </div>
 

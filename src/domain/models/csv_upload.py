@@ -95,3 +95,5 @@ class UploadResult:
     error_rows: int
     validations: list[ValidationError]
     status: str
+    storage_provider: str | None = None
+    storage_bucket: str | None = None

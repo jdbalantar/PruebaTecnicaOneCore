@@ -34,6 +34,8 @@ export interface UploadResultResponse {
   upload_id: string;
   filename: string;
   s3_key: string;
+  storage_provider?: string | null;
+  storage_bucket?: string | null;
   total_rows: number;
   valid_rows: number;
   error_rows: number;
@@ -49,6 +51,8 @@ export interface AnalysisResultResponse {
   ai_model: string;
   fallback_used?: boolean;
   fallback_reason?: string | null;
+  storage_provider?: string | null;
+  storage_bucket?: string | null;
 }
 
 export interface EventResponse {
@@ -87,7 +91,9 @@ export interface SystemHealthResponse {
   services: {
     api: ServiceHealth;
     database: ServiceHealth;
-    storage: ServiceHealth;
+    minio: ServiceHealth;
+    s3: ServiceHealth;
+    storage?: ServiceHealth;
   };
 }
 

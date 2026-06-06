@@ -38,6 +38,7 @@ export class CsvUploadPageComponent {
   private readonly templatePath = 'assets/templates/onecore-csv-template.csv';
 
   validationMode = 'lenient';
+  storageProvider = 'minio';
   allowDuplicates = false;
   csvFile?: File;
   csvResult?: UploadResultResponse;
@@ -46,6 +47,11 @@ export class CsvUploadPageComponent {
   readonly validationOptions = [
     { label: 'Flexible', value: 'lenient' },
     { label: 'Estricta', value: 'strict' },
+  ];
+
+  readonly storageOptions = [
+    { label: 'MinIO', value: 'minio' },
+    { label: 'LocalStack S3', value: 'localstack' },
   ];
 
   constructor(private readonly api: ApiService) {}
@@ -74,7 +80,7 @@ export class CsvUploadPageComponent {
       return;
     }
 
-    this.api.uploadCsv(this.csvFile, this.validationMode, this.allowDuplicates).subscribe({
+    this.api.uploadCsv(this.csvFile, this.validationMode, this.allowDuplicates, this.storageProvider).subscribe({
       next: (response) => {
         if (!response.success || !response.data) {
           this.apiError = response.error?.message || 'Error al subir CSV';

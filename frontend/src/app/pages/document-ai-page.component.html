@@ -9,6 +9,8 @@
             <p-fileupload mode="basic" [customUpload]="true" [auto]="false" [multiple]="false"
                 accept=".pdf,.jpg,.jpeg,.png" chooseLabel="Seleccionar documento" chooseIcon="pi pi-file"
                 (onSelect)="onDocumentSelected($event)" />
+            <p-select [options]="storageOptions" optionLabel="label" optionValue="value" [(ngModel)]="storageProvider"
+                placeholder="Proveedor de almacenamiento" />
             <p-button label="Analizar documento" icon="pi pi-sparkles" (onClick)="analyzeDocument()" />
         </div>
 
@@ -34,6 +36,11 @@
             <div class="confidence-block">
                 <span>Confianza</span>
                 <p-progressbar [value]="confidencePercent" [showValue]="true" />
+            </div>
+
+            <div class="kv-grid">
+                <div><strong>Proveedor:</strong> {{ result.storage_provider || '-' }}</div>
+                <div><strong>Bucket:</strong> {{ result.storage_bucket || '-' }}</div>
             </div>
 
             <p-card *ngIf="isInvoice && invoiceData as invoice" class="result-card">

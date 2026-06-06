@@ -127,3 +127,5 @@ class AnalysisResult:
     ai_model: str
     fallback_used: bool = False
     fallback_reason: str | None = None
+    storage_provider: str | None = None
+    storage_bucket: str | None = None

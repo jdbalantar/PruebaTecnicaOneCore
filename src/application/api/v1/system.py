@@ -30,11 +30,31 @@ def system_health(
         db_detail = str(exc)
 
     settings = get_settings()
-    storage = S3FileStorageAdapter(settings)
-    storage_ok, storage_detail = storage.health_check(settings.S3_BUCKET_CSV)
-    storage_status = "up" if storage_ok else "down"
 
-    overall = "ok" if db_status == "up" and storage_status == "up" else "degraded"
+    minio = S3FileStorageAdapter(
+        settings,
+        endpoint_url=settings.MINIO_ENDPOINT_URL or settings.S3_ENDPOINT_URL,
+        access_key_id=settings.MINIO_ACCESS_KEY_ID or settings.AWS_ACCESS_KEY_ID,
+        secret_access_key=settings.MINIO_SECRET_ACCESS_KEY or settings.AWS_SECRET_ACCESS_KEY,
+    )
+    minio_bucket = settings.MINIO_BUCKET_CSV or settings.S3_BUCKET_CSV
+    minio_ok, minio_detail = minio.health_check(minio_bucket)
+    minio_status = "up" if minio_ok else "down"
+
+    s3 = S3FileStorageAdapter(
+        settings,
+        endpoint_url=settings.LOCALSTACK_ENDPOINT_URL,
+        access_key_id=settings.LOCALSTACK_ACCESS_KEY_ID,
+        secret_access_key=settings.LOCALSTACK_SECRET_ACCESS_KEY,
+    )
+    s3_ok, s3_detail = s3.health_check(settings.LOCALSTACK_BUCKET_CSV)
+    s3_status = "up" if s3_ok else "down"
+
+    overall = (
+        "ok"
+        if db_status == "up" and minio_status == "up" and s3_status == "up"
+        else "degraded"
+    )
 
     return ok(
         SystemHealthResponse(
@@ -43,7 +63,10 @@ def system_health(
             services={
                 "api": ServiceHealthResponse(status="up", detail="running"),
                 "database": ServiceHealthResponse(status=db_status, detail=db_detail),
-                "storage": ServiceHealthResponse(status=storage_status, detail=storage_detail),
+                "minio": ServiceHealthResponse(status=minio_status, detail=minio_detail),
+                "s3": ServiceHealthResponse(status=s3_status, detail=s3_detail),
+                # Backward compatibility: keep existing key used by the frontend.
+                "storage": ServiceHealthResponse(status=minio_status, detail=minio_detail),
             },
         )
     )

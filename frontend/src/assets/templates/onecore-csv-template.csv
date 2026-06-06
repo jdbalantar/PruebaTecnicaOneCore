@@ -1,4 +1,0 @@
-cliente_nombre,cliente_direccion,proveedor_nombre,proveedor_direccion,numero_factura,fecha_factura,producto,cantidad,precio_unitario,total_linea,total_factura,moneda,estado
-Acme SA,"Av. Corrientes 123, CABA",Distribuidora Norte SRL,"Ruta 8 Km 41, Pilar",FAC-0001,2026-06-01,Licencia SaaS,2,1250.00,2500.00,3025.00,USD,pendiente
-Globex LLC,"742 Evergreen Terrace, Springfield",Servicios Logisticos SA,"Av. Libertador 4500, CABA",FAC-0002,2026-06-02,Consultoria IT,3,500.00,1500.00,1815.00,USD,pagada
-Initech,"Calle Falsa 123, Monterrey",Proveedor Centro,"Industrial 99, Guadalajara",FAC-0003,2026-06-03,Soporte tecnico,5,180.00,900.00,1089.00,USD,pendiente

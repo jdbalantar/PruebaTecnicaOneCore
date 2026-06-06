@@ -19,7 +19,14 @@ class S3FileStorageAdapter(IFileStoragePort):
             (``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, ``AWS_REGION``).
     """
 
-    def __init__(self, settings) -> None:
+    def __init__(
+        self,
+        settings,
+        *,
+        endpoint_url: str | None = None,
+        access_key_id: str | None = None,
+        secret_access_key: str | None = None,
+    ) -> None:
         """Initialise the S3 client from application settings.
 
         Args:
@@ -27,10 +34,10 @@ class S3FileStorageAdapter(IFileStoragePort):
         """
         self._s3 = boto3.client(
             "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            aws_access_key_id=access_key_id or settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=secret_access_key or settings.AWS_SECRET_ACCESS_KEY,
             region_name=settings.AWS_REGION,
-            endpoint_url=settings.S3_ENDPOINT_URL,
+            endpoint_url=endpoint_url if endpoint_url is not None else settings.S3_ENDPOINT_URL,
             config=Config(s3={"addressing_style": "path"}),
         )
         self._region = settings.AWS_REGION
