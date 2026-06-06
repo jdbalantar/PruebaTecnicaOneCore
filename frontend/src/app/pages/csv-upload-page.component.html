@@ -1,0 +1,69 @@
+<main class="action-page">
+    <p-card>
+        <ng-template #title>CSV Upload</ng-template>
+        <ng-template #subtitle>POST /files/upload</ng-template>
+
+        <p-message *ngIf="apiError" severity="error" [text]="apiError" styleClass="w-full" />
+
+        <div class="form-grid mt-3">
+            <p-fileupload mode="basic" [customUpload]="true" [auto]="false" [multiple]="false" accept=".csv"
+                chooseLabel="Seleccionar CSV" chooseIcon="pi pi-file" (onSelect)="onCsvSelected($event)" />
+            <p-button styleClass="p-button-outlined template-download" icon="pi pi-download"
+                label="Descargar template CSV" (onClick)="downloadTemplate()" />
+            <p-select [options]="validationOptions" optionLabel="label" optionValue="value"
+                [(ngModel)]="validationMode" />
+            <div class="inline-row">
+                <p-checkbox [(ngModel)]="allowDuplicates" [binary]="true" inputId="dups-route" />
+                <label for="dups-route">Permitir duplicados</label>
+            </div>
+            <p-button label="Subir CSV" icon="pi pi-upload" (onClick)="uploadCsv()" />
+        </div>
+
+        <p-divider />
+
+        <section class="result-grid" *ngIf="csvResult as result">
+            <div class="result-head">
+                <div>
+                    <h3>Resultado de Carga</h3>
+                    <small>Upload: {{ result.upload_id }}</small>
+                </div>
+                <p-tag [value]="result.status.toUpperCase()" [severity]="statusSeverity" />
+            </div>
+
+            <div class="kv-grid">
+                <div><strong>Archivo:</strong> {{ result.filename }}</div>
+                <div><strong>S3 Key:</strong> {{ result.s3_key }}</div>
+                <div><strong>Total filas:</strong> {{ result.total_rows }}</div>
+                <div><strong>Validas:</strong> {{ result.valid_rows }}</div>
+                <div><strong>Con error:</strong> {{ result.error_rows }}</div>
+            </div>
+
+            <p-table [value]="result.validations" [paginator]="result.validations.length > 10" [rows]="10"
+                responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col">Fila</th>
+                        <th scope="col">Columna</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Mensaje</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{ item.row_number }}</td>
+                        <td>{{ item.column }}</td>
+                        <td>
+                            <p-tag [value]="item.error_type" severity="warn" />
+                        </td>
+                        <td>{{ item.message }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="4">No se encontraron validaciones con error.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </section>
+    </p-card>
+</main>

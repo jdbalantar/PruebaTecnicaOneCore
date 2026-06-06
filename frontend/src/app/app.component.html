@@ -1,0 +1,8 @@
+<router-outlet></router-outlet>
+
+<div class="global-loading-overlay" *ngIf="loading.isLoading()">
+    <div class="global-loading-card">
+        <i class="pi pi-spin pi-spinner"></i>
+        <output aria-live="polite" aria-label="Cargando">Cargando</output>
+    </div>
+</div>

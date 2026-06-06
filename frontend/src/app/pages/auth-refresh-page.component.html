@@ -1,0 +1,40 @@
+<main class="action-page">
+    <p-card>
+        <ng-template #title>Auth Refresh</ng-template>
+        <ng-template #subtitle>POST /auth/refresh</ng-template>
+
+        <div class="toolbar-actions">
+            <p-button label="Refrescar ahora" icon="pi pi-refresh" (onClick)="refreshToken()" />
+        </div>
+
+        <p-message *ngIf="apiError" severity="error" [text]="apiError" styleClass="w-full" />
+        <p-message *ngIf="refreshStatus && !apiError" severity="success"
+            text="Token refrescado y almacenado correctamente" styleClass="w-full" />
+
+        <p-divider />
+        <section class="refresh-details" *ngIf="refreshStatus">
+            <div class="row">
+                <span class="label">Token cambiado</span>
+                <strong [class.ok]="refreshStatus.rotated" [class.bad]="!refreshStatus.rotated">
+                    {{ refreshStatus.rotated ? 'Si' : 'No' }}
+                </strong>
+            </div>
+            <div class="row">
+                <span class="label">Exp anterior</span>
+                <code>{{ refreshStatus.previousExp }}</code>
+            </div>
+            <div class="row">
+                <span class="label">Exp nuevo</span>
+                <code>{{ refreshStatus.newExp }}</code>
+            </div>
+            <div class="row">
+                <span class="label">JTI anterior</span>
+                <code>{{ refreshStatus.previousJti }}</code>
+            </div>
+            <div class="row">
+                <span class="label">JTI nuevo</span>
+                <code>{{ refreshStatus.newJti }}</code>
+            </div>
+        </section>
+    </p-card>
+</main>

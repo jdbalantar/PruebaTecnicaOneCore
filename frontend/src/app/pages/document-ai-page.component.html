@@ -1,0 +1,90 @@
+<main class="action-page">
+    <p-card>
+        <ng-template #title>Document AI</ng-template>
+        <ng-template #subtitle>POST /documents/analyze</ng-template>
+
+        <p-message *ngIf="apiError" severity="error" [text]="apiError" styleClass="w-full" />
+
+        <div class="form-grid mt-3">
+            <p-fileupload mode="basic" [customUpload]="true" [auto]="false" [multiple]="false"
+                accept=".pdf,.jpg,.jpeg,.png" chooseLabel="Seleccionar documento" chooseIcon="pi pi-file"
+                (onSelect)="onDocumentSelected($event)" />
+            <p-button label="Analizar documento" icon="pi pi-sparkles" (onClick)="analyzeDocument()" />
+        </div>
+
+        <p-divider />
+
+        <section class="result-grid" *ngIf="analysisResult as result">
+            <div class="result-head">
+                <div>
+                    <h3>Resultado del Analisis</h3>
+                    <small>Documento procesado: {{ result.document_id }}</small>
+                </div>
+                <div class="head-tags">
+                    <p-tag [value]="result.doc_type.toUpperCase()" [severity]="docTypeSeverity" />
+                    <p-tag [value]="result.ai_model" [severity]="hasFallback ? 'warn' : 'info'" />
+                </div>
+            </div>
+
+            <p-message *ngIf="hasFallback" severity="warn"
+                text="La IA principal no estuvo disponible. Se devolvio clasificacion fallback." styleClass="w-full" />
+
+            <small *ngIf="hasFallback" class="fallback-detail">Detalle: {{ fallbackReason }}</small>
+
+            <div class="confidence-block">
+                <span>Confianza</span>
+                <p-progressbar [value]="confidencePercent" [showValue]="true" />
+            </div>
+
+            <p-card *ngIf="isInvoice && invoiceData as invoice" class="result-card">
+                <ng-template #title>Factura</ng-template>
+                <div class="kv-grid">
+                    <div><strong>Cliente:</strong> {{ invoice.client_name || '-' }}</div>
+                    <div><strong>Direccion cliente:</strong> {{ invoice.client_address || '-' }}</div>
+                    <div><strong>Proveedor:</strong> {{ invoice.supplier_name || '-' }}</div>
+                    <div><strong>Direccion proveedor:</strong> {{ invoice.supplier_address || '-' }}</div>
+                    <div><strong>Nro factura:</strong> {{ invoice.invoice_number || '-' }}</div>
+                    <div><strong>Fecha:</strong> {{ invoice.date || '-' }}</div>
+                    <div><strong>Total:</strong> {{ invoice.total | number: '1.2-2' }}</div>
+                </div>
+
+                <p-table [value]="invoice.products" [paginator]="false" responsiveLayout="scroll" styleClass="mt-3">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Unitario</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.unit_price | number: '1.2-2' }}</td>
+                            <td>{{ item.total | number: '1.2-2' }}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="4">Sin productos extraidos.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-card>
+
+            <p-card *ngIf="isInformation && informationData as info" class="result-card">
+                <ng-template #title>Informacion General</ng-template>
+                <div class="kv-grid single-col">
+                    <div><strong>Descripcion:</strong> {{ info.description || '-' }}</div>
+                    <div><strong>Resumen:</strong> {{ info.summary || '-' }}</div>
+                    <div class="sentiment-row">
+                        <strong>Sentimiento:</strong>
+                        <p-tag [value]="(info.sentiment || 'neutral').toUpperCase()"
+                            [severity]="sentimentSeverity(info.sentiment)" />
+                    </div>
+                </div>
+            </p-card>
+        </section>
+    </p-card>
+</main>

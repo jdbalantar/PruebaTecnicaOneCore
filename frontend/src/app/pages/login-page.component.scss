@@ -1,0 +1,207 @@
+.login-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(320px, 620px) minmax(320px, 460px);
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+}
+
+.brand-panel {
+    border-radius: 12px;
+    padding: 1.5rem;
+    color: #0f172a;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+
+.brand-chip {
+    display: inline-flex;
+    margin-bottom: 0.8rem;
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.brand-panel h1 {
+    margin: 0 0 0.75rem;
+    font-size: 2rem;
+    line-height: 1.15;
+}
+
+.brand-panel p {
+    margin: 0;
+    color: #475569;
+    max-width: 48ch;
+    line-height: 1.5;
+}
+
+.brand-metrics {
+    margin-top: 1.2rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(80px, 1fr));
+    gap: 0.6rem;
+}
+
+.brand-metrics div {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.7rem 0.6rem;
+    background: #f8fafc;
+}
+
+.brand-metrics strong {
+    display: block;
+    font-size: 1.05rem;
+    color: #0f172a;
+}
+
+.brand-metrics span {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+:host ::ng-deep .login-card {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    box-shadow: none;
+}
+
+.login-header .eyebrow {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #475569;
+}
+
+.login-header h2 {
+    margin: 0.25rem 0 0.45rem;
+    font-size: 1.5rem;
+    color: #0f172a;
+}
+
+.login-header p {
+    margin: 0;
+    color: #475569;
+}
+
+.login-form {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.9rem;
+}
+
+.field-wrap {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.field-wrap label {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.field-error {
+    color: #dc2626;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+:host ::ng-deep .field-wrap .p-inputtext,
+:host ::ng-deep .field-wrap .p-password-input,
+:host ::ng-deep .field-wrap .p-autocomplete-input {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+}
+
+:host ::ng-deep .field-wrap .p-inputtext:enabled:focus,
+:host ::ng-deep .field-wrap .p-password-input:enabled:focus,
+:host ::ng-deep .field-wrap .p-autocomplete-input:enabled:focus {
+    border-color: #64748b;
+    box-shadow: none;
+}
+
+:host ::ng-deep .cta-btn {
+    border-radius: 8px;
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+
+.submit-hint {
+    color: #64748b;
+    font-size: 0.79rem;
+}
+
+:host ::ng-deep .w-full {
+    width: 100%;
+}
+
+:host-context(.app-dark) .login-page {
+    background: #0b1220;
+}
+
+:host-context(.app-dark) .brand-panel,
+:host-context(.app-dark) ::ng-deep .login-card,
+:host-context(.app-dark) .brand-metrics div {
+    background: #111827;
+    border-color: #1f2937;
+}
+
+:host-context(.app-dark) .brand-panel,
+:host-context(.app-dark) .brand-panel h1,
+:host-context(.app-dark) .login-header h2,
+:host-context(.app-dark) .brand-metrics strong {
+    color: #e5e7eb;
+}
+
+:host-context(.app-dark) .brand-panel p,
+:host-context(.app-dark) .brand-metrics span,
+:host-context(.app-dark) .login-header p,
+:host-context(.app-dark) .field-wrap label,
+:host-context(.app-dark) .submit-hint {
+    color: #94a3b8;
+}
+
+:host-context(.app-dark) .brand-chip {
+    background: #1f2937;
+    color: #cbd5e1;
+}
+
+:host-context(.app-dark) ::ng-deep .field-wrap .p-inputtext,
+:host-context(.app-dark) ::ng-deep .field-wrap .p-password-input,
+:host-context(.app-dark) ::ng-deep .field-wrap .p-autocomplete-input {
+    background: #0f172a;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+@media (max-width: 980px) {
+    .login-page {
+        grid-template-columns: 1fr;
+        align-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .login-page {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .brand-metrics {
+        grid-template-columns: 1fr;
+    }
+}

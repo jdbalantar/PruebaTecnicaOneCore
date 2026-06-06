@@ -1,0 +1,53 @@
+<main class="action-page">
+    <p-card>
+        <ng-template #title>Events</ng-template>
+        <ng-template #subtitle>GET /events + export</ng-template>
+
+        <div class="toolbar-actions">
+            <p-button label="Consultar" icon="pi pi-search" (onClick)="loadEvents()" />
+            <p-button label="Exportar Excel" icon="pi pi-file-excel" severity="success" (onClick)="exportEvents()" />
+        </div>
+
+        <p-message *ngIf="apiError" severity="error" [text]="apiError" styleClass="w-full" />
+
+        <div class="filters-grid mt-3">
+            <p-select [options]="eventTypes" [(ngModel)]="eventType" placeholder="event_type" [showClear]="true" />
+            <p-autocomplete [(ngModel)]="description" [suggestions]="descriptionSuggestions"
+                (completeMethod)="filterDescription($event)" [forceSelection]="false" placeholder="description" />
+            <p-datepicker [(ngModel)]="dateFrom" [showTime]="true" dateFormat="yy-mm-dd" placeholder="date_from"
+                [showIcon]="true" appendTo="body" />
+            <p-datepicker [(ngModel)]="dateTo" [showTime]="true" dateFormat="yy-mm-dd" placeholder="date_to"
+                [showIcon]="true" appendTo="body" />
+            <p-inputnumber [(ngModel)]="page" [min]="1" placeholder="page" [useGrouping]="false" />
+            <p-inputnumber [(ngModel)]="pageSize" [min]="1" [max]="200" placeholder="page_size" [useGrouping]="false" />
+        </div>
+
+        <p-divider />
+
+        <p-table [value]="eventsItems" [paginator]="true" [rows]="10" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Descripcion</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Fecha</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-event>
+                <tr>
+                    <td>
+                        <p-tag [value]="event.event_type" [severity]="severityForEvent(event.event_type)" />
+                    </td>
+                    <td>{{ event.description }}</td>
+                    <td>{{ event.user_id || 'system' }}</td>
+                    <td>{{ event.created_at | date: 'short' }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="4">No hay eventos para los filtros actuales.</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</main>

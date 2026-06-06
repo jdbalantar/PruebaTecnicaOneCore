@@ -1,0 +1,36 @@
+.global-loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: grid;
+    place-items: center;
+    background: rgba(248, 250, 252, 0.78);
+    backdrop-filter: blur(2px);
+}
+
+.global-loading-card {
+    min-width: 132px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.7rem 0.95rem;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.global-loading-card i {
+    font-size: 1rem;
+}
+
+:host-context(.app-dark) .global-loading-overlay {
+    background: rgba(11, 18, 32, 0.72);
+}
+
+:host-context(.app-dark) .global-loading-card {
+    background: #111827;
+    border-color: #1f2937;
+    color: #e5e7eb;
+}

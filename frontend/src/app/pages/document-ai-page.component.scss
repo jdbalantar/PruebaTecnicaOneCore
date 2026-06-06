@@ -1,0 +1,97 @@
+.action-page {
+    display: grid;
+    gap: 1rem;
+    background: #f8fafc;
+    padding: 1rem;
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.form-grid {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 560px;
+}
+
+.mt-3 {
+    margin-top: 0.75rem;
+}
+
+.result-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.result-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.head-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.confidence-block {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.fallback-detail {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.kv-grid {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.kv-grid.single-col {
+    grid-template-columns: 1fr;
+}
+
+.sentiment-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+:host ::ng-deep .p-card {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    box-shadow: none;
+    background: #ffffff;
+}
+
+:host ::ng-deep .p-datatable,
+:host ::ng-deep .p-datatable .p-datatable-thead>tr>th {
+    border-color: #e2e8f0;
+}
+
+:host-context(.app-dark) .action-page {
+    background: #0b1220;
+}
+
+:host-context(.app-dark) ::ng-deep .p-card,
+:host-context(.app-dark) ::ng-deep .p-datatable,
+:host-context(.app-dark) ::ng-deep .p-datatable .p-datatable-thead>tr>th,
+:host-context(.app-dark) ::ng-deep .p-datatable .p-datatable-tbody>tr>td {
+    background: #111827;
+    border-color: #1f2937;
+    color: #e5e7eb;
+}
+
+:host-context(.app-dark) .fallback-detail {
+    color: #94a3b8;
+}

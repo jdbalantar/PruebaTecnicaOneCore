@@ -1,0 +1,101 @@
+@import 'primeicons/primeicons.css';
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  --oc-space-1: 0.25rem;
+  --oc-space-2: 0.5rem;
+  --oc-space-3: 0.75rem;
+  --oc-space-4: 1rem;
+  --oc-radius-sm: 8px;
+  --oc-radius-md: 10px;
+  --oc-border-color: #e2e8f0;
+  --oc-control-height: 2.25rem;
+  --oc-control-font-size: 0.9rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: Manrope, 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(1200px 600px at 12% -5%, rgba(56, 189, 248, 0.2) 0%, rgba(56, 189, 248, 0) 65%),
+    radial-gradient(900px 500px at 92% 2%, rgba(30, 64, 175, 0.14) 0%, rgba(30, 64, 175, 0) 70%),
+    linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+  color: #0f172a;
+}
+
+body {
+  min-height: 100vh;
+}
+
+body.app-dark {
+  --oc-border-color: #1f2937;
+  background:
+    radial-gradient(1000px 560px at 10% -5%, rgba(34, 211, 238, 0.14) 0%, rgba(34, 211, 238, 0) 60%),
+    radial-gradient(900px 500px at 95% 10%, rgba(59, 130, 246, 0.16) 0%, rgba(59, 130, 246, 0) 64%),
+    linear-gradient(180deg, #020617 0%, #0b1220 40%, #020617 100%);
+  color: #e2e8f0;
+}
+
+body,
+.p-component {
+  font-family: Manrope, 'Segoe UI', sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.json-view {
+  margin: 0;
+  background: #0f172a;
+  color: #bae6fd;
+  border-radius: 12px;
+  padding: 1rem;
+  max-height: 300px;
+  overflow: auto;
+  font-size: 0.85rem;
+}
+
+@media (min-width: 1024px) {
+  :where(.p-button) {
+    min-height: var(--oc-control-height);
+    border-radius: var(--oc-radius-sm);
+    box-shadow: none;
+    font-size: var(--oc-control-font-size);
+    padding: 0.45rem 0.8rem;
+  }
+
+  :where(.p-inputtext, .p-inputnumber-input, .p-autocomplete-input, .p-datepicker-input) {
+    min-height: var(--oc-control-height);
+    border-radius: var(--oc-radius-sm);
+    font-size: var(--oc-control-font-size);
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+  }
+
+  :where(.p-dropdown, .p-multiselect) {
+    min-height: var(--oc-control-height);
+    border-radius: var(--oc-radius-sm);
+  }
+
+  :where(.p-card) {
+    border-radius: var(--oc-radius-md);
+    border-color: var(--oc-border-color);
+  }
+
+  :where(.p-datatable .p-datatable-thead > tr > th, .p-datatable .p-datatable-tbody > tr > td) {
+    padding: 0.62rem 0.75rem;
+    border-color: var(--oc-border-color);
+    font-size: 0.88rem;
+  }
+}

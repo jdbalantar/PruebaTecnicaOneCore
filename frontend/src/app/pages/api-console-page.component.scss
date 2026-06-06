@@ -1,0 +1,201 @@
+.console-page {
+    min-height: 100vh;
+    padding: 1rem;
+    display: grid;
+    gap: 1rem;
+    background: #f8fafc;
+}
+
+:host ::ng-deep .console-toolbar {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+}
+
+:host ::ng-deep .console-toolbar h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+:host ::ng-deep .console-toolbar small {
+    color: #64748b;
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.widgets-grid {
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: repeat(4, minmax(170px, 1fr));
+}
+
+.kpi-card {
+    min-height: 130px;
+}
+
+.kpi-card.wide {
+    grid-column: span 2;
+}
+
+.kpi-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kpi-value {
+    margin-top: 0.9rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.recent-list {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.recent-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.recent-row small {
+    color: #64748b;
+}
+
+.health-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    margin-bottom: 0.6rem;
+}
+
+.health-grid {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.health-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+}
+
+.routes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+    gap: 0.9rem;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+    gap: 0.9rem;
+}
+
+.status-grid .kpi-card.wide {
+    grid-column: auto;
+}
+
+.recent-grid {
+    display: grid;
+}
+
+.recent-card {
+    width: 100%;
+}
+
+.route-card {
+    min-height: 180px;
+}
+
+.route-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 0.6rem;
+}
+
+.route-card-head i {
+    font-size: 1.1rem;
+    color: #334155;
+}
+
+.route-card-head h3 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.route-card p {
+    margin: 0 0 0.85rem;
+    color: #475569;
+}
+
+:host ::ng-deep .p-card {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    box-shadow: none;
+    background: #ffffff;
+}
+
+:host-context(.app-dark) .console-page {
+    background: #0b1220;
+}
+
+:host-context(.app-dark) ::ng-deep .console-toolbar,
+:host-context(.app-dark) ::ng-deep .p-card,
+:host-context(.app-dark) .health-item {
+    background: #111827;
+    border-color: #1f2937;
+}
+
+:host-context(.app-dark) ::ng-deep .console-toolbar h2,
+:host-context(.app-dark) .kpi-value {
+    color: #e5e7eb;
+}
+
+:host-context(.app-dark) ::ng-deep .console-toolbar small,
+:host-context(.app-dark) .recent-row small,
+:host-context(.app-dark) .route-card p {
+    color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+    .console-page {
+        padding: 0.75rem;
+    }
+
+    .widgets-grid,
+    .routes-grid,
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kpi-card.wide {
+        grid-column: auto;
+    }
+
+    .recent-row {
+        grid-template-columns: 1fr;
+    }
+
+    .health-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

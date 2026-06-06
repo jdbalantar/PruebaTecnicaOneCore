@@ -1,0 +1,60 @@
+<section class="login-page">
+    <article class="brand-panel">
+        <div class="brand-chip">OneCore Integration Suite</div>
+        <h1>Controla toda tu API desde un solo workspace</h1>
+        <p>
+            Autenticacion, CSV, analisis documental con IA y auditoria de eventos en una experiencia unificada.
+        </p>
+
+        <div class="brand-metrics">
+            <div>
+                <strong>4</strong>
+                <span>Modulos operativos</span>
+            </div>
+            <div>
+                <strong>100%</strong>
+                <span>Flujo integrado</span>
+            </div>
+            <div>
+                <strong>24/7</strong>
+                <span>Observabilidad</span>
+            </div>
+        </div>
+    </article>
+
+    <p-card class="login-card">
+        <div class="login-header">
+            <p class="eyebrow">Acceso seguro</p>
+            <h2>Iniciar sesion</h2>
+            <p>Ingresa con tu usuario del backend FastAPI para abrir la consola.</p>
+        </div>
+
+        <form #loginForm="ngForm" class="login-form" (ngSubmit)="submit(loginForm)">
+            <div class="field-wrap">
+                <label for="username">Usuario</label>
+                <p-autocomplete id="username" [(ngModel)]="username" name="username" [suggestions]="usernameSuggestions"
+                    (completeMethod)="filterUsername($event)" [dropdown]="true" [forceSelection]="false"
+                    autocomplete="username" required [inputStyleClass]="shouldShowUsernameError ? 'ng-invalid' : ''"
+                    (ngModelChange)="onUsernameChange()" />
+                <small class="field-error" *ngIf="shouldShowUsernameError">{{ usernameError }}</small>
+            </div>
+
+            <div class="field-wrap">
+                <label for="password">Password</label>
+                <p-password id="password" [(ngModel)]="password" name="password" [feedback]="false" [toggleMask]="true"
+                    autocomplete="current-password" required styleClass="w-full"
+                    [inputStyleClass]="'w-full ' + (shouldShowPasswordError ? 'ng-invalid' : '')"
+                    (ngModelChange)="onPasswordChange()" />
+                <small class="field-error" *ngIf="shouldShowPasswordError">{{ passwordError }}</small>
+            </div>
+
+            <p-button type="submit" [loading]="loading" [disabled]="loading"
+                [label]="loading ? 'Validando credenciales...' : 'Entrar al Workspace'"
+                [icon]="loading ? 'pi pi-spinner pi-spin' : 'pi pi-arrow-right'" styleClass="w-full cta-btn" />
+
+            <small class="submit-hint" *ngIf="!loading">Usa tus credenciales del backend para continuar.</small>
+        </form>
+
+        <p-message *ngIf="error" severity="error" [text]="error" styleClass="w-full mt-3" />
+    </p-card>
+</section>
