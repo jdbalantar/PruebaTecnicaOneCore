@@ -45,7 +45,7 @@ Backend:
 - PyODBC (SQL Server)
 - Pydantic Settings
 - python-jose + passlib/bcrypt
-- boto3 (S3/MinIO)
+- boto3 (S3/LocalStack)
 - openpyxl (export xlsx)
 - httpx
 
@@ -78,7 +78,7 @@ DevOps/Calidad:
   - Exception handlers con contrato uniforme
 - Infrastructure:
   - Repositorios SQL Server
-  - Adapter S3/MinIO
+  - Adapter S3/LocalStack
   - Adapter IA (Gemini)
   - DI container
 
@@ -114,7 +114,10 @@ Variables relevantes:
 
 - JWT: JWT_PRIVATE_KEY, JWT_PUBLIC_KEY
 - DB: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_DRIVER
-- S3: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, S3_ENDPOINT_URL
+- S3 base: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, S3_ENDPOINT_URL
+- Storage provider: STORAGE_DEFAULT_PROVIDER
+- MinIO: MINIO_ENDPOINT_URL, MINIO_ACCESS_KEY_ID, MINIO_SECRET_ACCESS_KEY, MINIO_BUCKET_CSV, MINIO_BUCKET_DOCS
+- LocalStack: LOCALSTACK_ENDPOINT_URL, LOCALSTACK_ACCESS_KEY_ID, LOCALSTACK_SECRET_ACCESS_KEY, LOCALSTACK_BUCKET_CSV, LOCALSTACK_BUCKET_DOCS
 - IA: AI_PROVIDER, GEMINI_API_KEY, GEMINI_API_BASE, GEMINI_MODEL_CLASSIFY, GEMINI_MODEL_EXTRACT
 
 ## Levantar Proyecto en Desarrollo
@@ -198,13 +201,86 @@ CI:
 
 ## Docker
 
-Stack local con app + SQL Server + MinIO:
+Stack local con app + SQL Server + MinIO + LocalStack (S3 compatible):
 
 - docker-compose up --build
 
 Migraciones dentro de contenedor app:
 
 - docker-compose exec app alembic upgrade head
+
+### Uso de MinIO y LocalStack en paralelo
+
+El frontend permite elegir el proveedor de almacenamiento en cada operacion de:
+
+- Carga de CSV
+- Analisis de documentos
+
+Proveedores disponibles:
+
+- minio
+- localstack
+
+### Levantar solo LocalStack
+
+- docker compose up -d localstack
+- docker compose logs --tail=120 localstack
+
+Esperado en logs:
+
+- Ready.
+
+### Levantar solo MinIO
+
+- docker compose up -d minio
+- docker compose logs --tail=80 minio
+
+### Crear buckets en LocalStack (AWS CLI)
+
+Configurar credenciales dummy en la terminal:
+
+- set AWS_ACCESS_KEY_ID=test
+- set AWS_SECRET_ACCESS_KEY=test
+- set AWS_DEFAULT_REGION=us-east-1
+
+Crear buckets:
+
+- aws --endpoint-url=http://localhost:4566 s3 mb s3://onecore-uploads-localstack
+- aws --endpoint-url=http://localhost:4566 s3 mb s3://onecore-documents-localstack
+
+Verificar:
+
+- aws --endpoint-url=http://localhost:4566 s3 ls
+
+### Crear buckets en MinIO (AWS CLI)
+
+Configurar credenciales MinIO en la terminal:
+
+- set AWS_ACCESS_KEY_ID=minioadmin
+- set AWS_SECRET_ACCESS_KEY=minioadmin
+- set AWS_DEFAULT_REGION=us-east-1
+
+Crear buckets:
+
+- aws --endpoint-url=http://localhost:9000 s3 mb s3://onecore-uploads
+- aws --endpoint-url=http://localhost:9000 s3 mb s3://onecore-documents
+
+Verificar:
+
+- aws --endpoint-url=http://localhost:9000 s3 ls
+
+### Verificacion rapida de estado
+
+- docker compose ps
+- docker compose logs --tail=120 localstack
+- docker compose logs --tail=80 minio
+- docker compose logs --tail=80 sqlserver
+
+Si no existe bucket, LocalStack puede responder:
+
+- NoSuchBucket
+
+En ese caso, crear buckets con los pasos anteriores.
 
 ## Troubleshooting
 
