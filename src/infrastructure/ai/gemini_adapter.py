@@ -16,6 +16,7 @@ from src.domain.models.document import (
     Sentiment,
 )
 from src.domain.ports.document_ai import IDocumentAIPort
+from src.infrastructure.ai.json_utils import parse_json_object
 
 _CLASSIFY_SYSTEM_PROMPT = (
     "You are a document classifier. Classify the document as either 'invoice' "
@@ -197,12 +198,7 @@ class GeminiDocumentAdapter(IDocumentAIPort):
 
     @staticmethod
     def _parse_classify_response(raw: str) -> tuple[DocumentType, float]:
-        try:
-            data: dict = json.loads(raw)
-        except json.JSONDecodeError as exc:
-            raise AIServiceError(
-                f"Classification response is not valid JSON: {raw!r}"
-            ) from exc
+        data = parse_json_object(raw, "Classification")
 
         type_str = str(data.get("type", "")).lower()
         confidence = float(data.get("confidence", 0.5))
@@ -215,12 +211,7 @@ class GeminiDocumentAdapter(IDocumentAIPort):
 
     @staticmethod
     def _parse_invoice_response(raw: str) -> InvoiceData:
-        try:
-            data: dict = json.loads(raw)
-        except json.JSONDecodeError as exc:
-            raise AIServiceError(
-                f"Invoice extraction response is not valid JSON: {raw!r}"
-            ) from exc
+        data = parse_json_object(raw, "Invoice extraction")
 
         products = [
             InvoiceProduct(
@@ -244,12 +235,7 @@ class GeminiDocumentAdapter(IDocumentAIPort):
 
     @staticmethod
     def _parse_info_response(raw: str) -> InformationData:
-        try:
-            data: dict = json.loads(raw)
-        except json.JSONDecodeError as exc:
-            raise AIServiceError(
-                f"Info extraction response is not valid JSON: {raw!r}"
-            ) from exc
+        data = parse_json_object(raw, "Info extraction")
 
         sentiment_raw = str(data.get("sentiment", "neutral")).lower()
         try:

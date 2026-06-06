@@ -15,8 +15,6 @@ from src.domain.services.document_analysis_service import DocumentAnalysisServic
 from src.domain.services.event_service import EventService
 from src.domain.services.file_upload_service import FileUploadService
 from src.infrastructure.ai.gemini_adapter import GeminiDocumentAdapter
-from src.infrastructure.ai.ollama_adapter import OllamaDocumentAdapter
-from src.infrastructure.ai.openai_adapter import OpenAIDocumentAdapter
 from src.infrastructure.db.session import get_db
 from src.infrastructure.repositories.csv_repository import CSVRepository
 from src.infrastructure.repositories.document_repository import DocumentRepository
@@ -27,15 +25,11 @@ from src.infrastructure.storage.s3_adapter import S3FileStorageAdapter
 
 def _build_document_ai_adapter(settings):
     provider = settings.AI_PROVIDER.strip().lower()
-    if provider == "openai":
-        return OpenAIDocumentAdapter(settings)
-    if provider == "gemini":
+    if provider in ("", "gemini"):
         return GeminiDocumentAdapter(settings)
-    if provider == "ollama":
-        return OllamaDocumentAdapter(settings)
 
     raise ValueError(
-        f"Unsupported AI_PROVIDER '{settings.AI_PROVIDER}'. Use 'openai', 'gemini' or 'ollama'."
+        f"Unsupported AI_PROVIDER '{settings.AI_PROVIDER}'. Use 'gemini'."
     )
 
 
@@ -81,7 +75,7 @@ def get_document_analysis_service(
 ) -> DocumentAnalysisService:
     """FastAPI dependency that builds a DocumentAnalysisService for the current request.
 
-    Wires together an OpenAIDocumentAdapter, S3FileStorageAdapter,
+    Wires together a GeminiDocumentAdapter, S3FileStorageAdapter,
     DocumentRepository, and EventRepository backed by the request-scoped
     DB session and application settings.
 

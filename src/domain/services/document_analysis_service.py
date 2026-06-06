@@ -46,15 +46,7 @@ class DocumentAnalysisService:
         self._settings = settings
 
     def _active_models(self) -> tuple[str, str]:
-        provider = self._settings.AI_PROVIDER.strip().lower()
-        if provider == "openai":
-            return self._settings.OPENAI_MODEL_CLASSIFY, self._settings.OPENAI_MODEL_EXTRACT
-        if provider == "gemini":
-            return self._settings.GEMINI_MODEL_CLASSIFY, self._settings.GEMINI_MODEL_EXTRACT
-        if provider == "ollama":
-            return self._settings.OLLAMA_MODEL_CLASSIFY, self._settings.OLLAMA_MODEL_EXTRACT
-
-        return "unknown", "unknown"
+        return self._settings.GEMINI_MODEL_CLASSIFY, self._settings.GEMINI_MODEL_EXTRACT
 
     # ------------------------------------------------------------------
     # Public API

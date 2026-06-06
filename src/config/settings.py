@@ -48,31 +48,14 @@ class Settings(BaseSettings):
     S3_BUCKET_CSV: str = "onecore-uploads"
     S3_BUCKET_DOCS: str = "onecore-documents"
 
-    # --------------- OpenAI ---------------
-    AI_PROVIDER: str = "ollama"
-    OPENAI_API_KEY: str = ""
-    OPENAI_MODEL_CLASSIFY: str = "gpt-4o-mini"
-    OPENAI_MODEL_EXTRACT: str = "gpt-4o"
+    # --------------- AI Provider ---------------
+    AI_PROVIDER: str = "gemini"
 
     # --------------- Gemini ---------------
     GEMINI_API_KEY: str = ""
     GEMINI_API_BASE: str = "https://generativelanguage.googleapis.com/v1beta"
     GEMINI_MODEL_CLASSIFY: str = "gemini-2.5-flash-lite"
     GEMINI_MODEL_EXTRACT: str = "gemini-2.5-flash-lite"
-
-    # --------------- Ollama (Local) ---------------
-    OLLAMA_BASE_URL: str = "http://127.0.0.1:11434"
-    OLLAMA_MODEL_CLASSIFY: str = "llava:7b"
-    OLLAMA_MODEL_EXTRACT: str = "llava:7b"
-    OLLAMA_REQUEST_TIMEOUT_SECONDS: int = 180
-    OLLAMA_OCR_TEXT_MAX_CHARS: int = 12000
-
-    # --------------- OCR (Preprocessing) ---------------
-    OCR_ENABLED: bool = True
-    OCR_LANG: str = "eng"
-    OCR_TESSERACT_CMD: str | None = None
-    OCR_PDF_MAX_PAGES: int = 5
-    OCR_MIN_TEXT_CHARS: int = 40
 
     # --------------- CSV Validation ---------------
     CSV_MAX_FILE_SIZE_MB: int = 10

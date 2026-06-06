@@ -322,7 +322,7 @@ class TestDocumentAnalysis:
         mock_settings,
     ):
         """An exception from classify_document must be wrapped and re-raised as AIServiceError."""
-        mock_ai_port.classify_document.side_effect = RuntimeError("OpenAI timeout")
+        mock_ai_port.classify_document.side_effect = RuntimeError("AI timeout")
         service = _make_service(
             mock_ai_port, mock_storage, mock_document_repo, mock_event_repo, mock_settings
         )

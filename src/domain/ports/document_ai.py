@@ -8,7 +8,7 @@ from ..models.document import DocumentType, InformationData, InvoiceData
 class IDocumentAIPort(ABC):
     """Abstract port for AI-powered document analysis.
 
-    Implementations wrap an external AI provider (e.g. OpenAI) and are
+    Implementations wrap an external AI provider and are
     injected at application startup.
     """
 

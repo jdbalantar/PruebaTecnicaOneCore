@@ -29,9 +29,10 @@ def mock_settings():
     settings.S3_BUCKET_DOCS = "test-docs-bucket"
     settings.CSV_MAX_FILE_SIZE_MB = 10
     settings.CSV_MAX_ROWS = 50000
-    settings.OPENAI_API_KEY = "test-key"
-    settings.OPENAI_MODEL_CLASSIFY = "gpt-4o-mini"
-    settings.OPENAI_MODEL_EXTRACT = "gpt-4o"
+    settings.AI_PROVIDER = "gemini"
+    settings.GEMINI_API_KEY = "test-key"
+    settings.GEMINI_MODEL_CLASSIFY = "gemini-2.5-flash-lite"
+    settings.GEMINI_MODEL_EXTRACT = "gemini-2.5-flash-lite"
     return settings
 
 
