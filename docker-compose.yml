@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      - DB_HOST=sqlserver
+      - DB_PORT=1433
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - AWS_REGION=us-east-1
+      - S3_ENDPOINT_URL=http://minio:9000
+    env_file: .env
+    depends_on: [sqlserver, minio]
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "YourStrong@Passw0rd"
+      ACCEPT_EULA: "Y"
+      MSSQL_DB: "prueba_tecnica"
+    ports: ["1433:1433"]
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports: ["9000:9000", "9001:9001"]
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin

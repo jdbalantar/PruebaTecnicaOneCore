@@ -1,0 +1,94 @@
+{% set event_type_classes = {
+'user_login': 'bg-primary',
+'token_renewal': 'bg-secondary',
+'csv_upload': 'bg-info text-dark',
+'csv_validation': 'bg-info text-dark',
+'doc_upload': 'bg-warning text-dark',
+'ai_classification': 'bg-dark',
+'ai_extraction': 'bg-dark',
+'event_export': 'bg-success',
+'error': 'bg-danger',
+} %}
+
+{% if events %}
+{% for event in events %}
+<tr>
+    <td>
+        <span class="truncate-id d-inline-block" title="{{ event.id }}" data-bs-toggle="tooltip"
+            data-bs-title="{{ event.id }}">
+            {{ event.id | string | truncate(8, False, '') }}
+        </span>
+    </td>
+    <td>
+        <span
+            class="badge {{ event_type_classes.get(event.event_type.value if event.event_type is not string else event.event_type, 'bg-secondary') }}">
+            {{ (event.event_type.value if event.event_type is not string else event.event_type) | replace('_', ' ') |
+            title }}
+        </span>
+    </td>
+    <td class="text-truncate" style="max-width: 300px;" title="{{ event.description }}">
+        {{ event.description }}
+    </td>
+    <td>
+        {% if event.user_id %}
+        <code class="truncate-id">{{ event.user_id | string | truncate(8, False, '') }}</code>
+        {% else %}
+        <span class="text-muted">—</span>
+        {% endif %}
+    </td>
+    <td class="text-nowrap">
+        <small>{{ event.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+    </td>
+</tr>
+{% endfor %}
+{% else %}
+<tr>
+    <td colspan="5" class="text-center text-muted py-4">
+        No se encontraron eventos con los filtros aplicados.
+    </td>
+</tr>
+{% endif %}
+
+<!-- Pagination row (injected inline so HTMX swaps it with tbody content) -->
+<tr id="pagination-holder" class="d-none">
+    <td colspan="5">
+        <nav aria-label="Paginación de eventos" class="mt-2">
+            <ul class="pagination pagination-sm justify-content-center mb-0">
+                {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" hx-get="/partials/events-table" hx-include="#filter-form"
+                        hx-target="#events-table-body" hx-swap="innerHTML" hx-vals='{"page": {{ page - 1 }}}'>
+                        &laquo;
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                    <span class="page-link">Página {{ page }} / {{ ((total - 1) // page_size + 1) if total > 0 else 1
+                        }}</span>
+                </li>
+
+                {% if page * page_size < total %} <li class="page-item">
+                    <a class="page-link" hx-get="/partials/events-table" hx-include="#filter-form"
+                        hx-target="#events-table-body" hx-swap="innerHTML" hx-vals='{"page": {{ page + 1 }}}'>
+                        &raquo;
+                    </a>
+                    </li>
+                    {% endif %}
+            </ul>
+        </nav>
+    </td>
+</tr>
+
+<script>
+    // Update the counter badge and show pagination if we have results
+    (function () {
+        const countEl = document.getElementById('events-count');
+        if (countEl) countEl.textContent = '{{ total }}';
+        const pagHolder = document.getElementById('pagination-holder');
+        if (pagHolder) pagHolder.classList.remove('d-none');
+        // Bootstrap tooltips
+        const tooltipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipEls.forEach(el => new bootstrap.Tooltip(el));
+    })();
+</script>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Análisis de Documentos{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+
+        <h2 class="mb-4">
+            <i class="bi bi-cpu me-2"></i>Análisis de Documentos
+        </h2>
+
+        <!-- Upload card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <i class="bi bi-upload me-2"></i>Subir documento
+            </div>
+            <div class="card-body">
+                <p class="text-muted small">
+                    Formatos aceptados: <strong>PDF, JPG, JPEG, PNG</strong>.
+                    El documento será clasificado automáticamente por IA.
+                </p>
+
+                <form hx-post="/partials/document-analyze" hx-encoding="multipart/form-data"
+                    hx-target="#analysis-result" hx-swap="innerHTML" hx-indicator="#upload-spinner" id="upload-form">
+                    <div class="mb-3">
+                        <label for="file" class="form-label fw-semibold">Seleccioná el archivo</label>
+                        <input class="form-control" type="file" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png"
+                            required />
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <button type="submit" class="btn btn-dark">
+                            <i class="bi bi-search me-1"></i>Analizar
+                        </button>
+                        <div id="upload-spinner" class="htmx-indicator d-flex align-items-center gap-2">
+                            <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                                <span class="visually-hidden">Procesando…</span>
+                            </div>
+                            <span class="text-muted small">Procesando con IA…</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Result area — populated by HTMX after upload -->
+        <div id="analysis-result"></div>
+
+    </div>
+</div>
+{% endblock %}
